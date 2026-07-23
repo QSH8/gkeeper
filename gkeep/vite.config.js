@@ -7,14 +7,13 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    vue(),
-    vueJsx(),
-    vueDevTools(),
-  ],
+  plugins: [vue(), vueJsx(), vueDevTools()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@api': fileURLToPath(new URL('./src/api/index.js', import.meta.url)),
+      '@services': fileURLToPath(new URL('./src/services/index.js', import.meta.url)),
+      '@utils': fileURLToPath(new URL('./src/utils/index.js', import.meta.url)),
     },
   },
 })
