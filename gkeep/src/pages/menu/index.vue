@@ -1,33 +1,20 @@
 <template>
-  <div>
-    Меню
-  </div>
-  <div>
-    Меню
-  </div>
-  <div>
-    Меню
-  </div>
-  <div>
-    Меню
-  </div>
-  <div>
-    Меню
-  </div>
-  <div>
-    Меню
-  </div>
-  <div>
-    Меню
-  </div>
-  <div>
-    Меню
-  </div>
+  <MenuList v-model:active-category="activeCategory" />
 </template>
 
 <script>
+import MenuList from './components/MenuList.vue';
 export default {
   name: 'Menu',
+  components: {
+    MenuList,
+  },
+
+  data() {
+    return {
+      activeCategory: '',
+    }
+  }
 }
 </script>
 
