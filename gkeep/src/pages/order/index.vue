@@ -8,7 +8,7 @@
         <ul class="info-list">
           <div class="info-list__title">
             <h3 class="info-list__title-text">Информация о заказе</h3>
-            <div class="info-list__title-status">{{ orderDetail.status }}</div>
+            <div class="info-list__title-status">{{ ORDER_STATUSES?.[orderDetail.status] ?? '-' }}</div>
           </div>
 
           <li class="info-list__item">
@@ -77,8 +77,9 @@
 import { formatDate } from '@services';
 import { coreDate } from '@utils';
 import { toast } from 'vue3-toastify';
-import { onFinishOrderAPI } from "@api"
+import { onFinishOrderAPI } from "../../api/index.js"
 import ConfirmModal from '@/components/ui/ConfirmModal.vue';
+import { ORDER_STATUSES } from '@/constants';
 
 export default {
   name: 'TheOrder',
@@ -94,6 +95,7 @@ export default {
       orderItems: [],
       coreDate,
       formatDate,
+      ORDER_STATUSES,
     };
   },
 
@@ -111,12 +113,14 @@ export default {
       this.showConfirm = true
     },
 
-    finishOrder() {
+    async finishOrder() {
       this.$nextTick(() => {
         toast(`Заказ #${this.confirmModalData} завершён`, { autoClose: 1000, type: 'success', position: 'top-center' })
       })
 
-      onFinishOrderAPI(this.confirmModalData)
+      await onFinishOrderAPI(this.confirmModalData)
+
+      this.$router.push('/orders-queue')
     },
 
     fetchOrder() {
@@ -125,7 +129,7 @@ export default {
       setTimeout(() => {
         this.orderDetail = {
           id: Number(idFromUrl),
-          status: 'В процессе',
+          status: 'on_',
           isFinished: false,
           createdAt: '2026-07-22T14:30:00',
           finishedAt: null,
@@ -154,20 +158,6 @@ export default {
       if (status === 'Завершен') return 'status-done';
       return 'status-default';
     },
-
-    handleComplete() {
-      this.orderDetail.status = 'Завершен';
-      this.orderDetail.isFinished = true;
-      this.orderDetail.finishedAt = new Date().toISOString();
-      this.orderDetail.finishedBy = 'Игорь (Повар)';
-    },
-
-    handleReturn() {
-      this.orderDetail.status = 'В процессе';
-      this.orderDetail.isFinished = false;
-      this.orderDetail.finishedAt = null;
-      this.orderDetail.finishedBy = null;
-    }
   }
 };
 
@@ -190,7 +180,6 @@ export default {
 .info-container {
   border-radius: 8px;
   margin-bottom: 1rem;
-  max-width: 400px;
 }
 
 .info-list {

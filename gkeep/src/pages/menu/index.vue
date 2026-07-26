@@ -1,5 +1,5 @@
 <template>
-  <MenuList v-model:active-category="activeCategory" />
+  <MenuList />
 </template>
 
 <script>
@@ -9,12 +9,6 @@ export default {
   components: {
     MenuList,
   },
-
-  data() {
-    return {
-      activeCategory: '',
-    }
-  }
 }
 </script>
 

@@ -13,6 +13,17 @@
           {{ tab.label }}
         </button>
       </div>
+      <div v-if="activeCategorySubtabs.length" class="subtabs-scroll-wrapper">
+        <button
+          v-for="subtab in activeCategorySubtabs"
+          :key="subtab.id"
+          class="subtab-button"
+          :class="{ 'subtab-button--active': subtab.value === activeSubCategory }"
+          @click="handleSubtabClick(subtab.value)"
+        >
+          {{ subtab.label }}
+        </button>
+      </div>
     </div>
 
     <!-- Поле поиска -->
@@ -71,43 +82,88 @@
         @click="handleItemClick(item)"
       />
     </transition-group>
+
+    <div v-if="isActiveCreate" class="order-button-wrapper">
+      <button
+        type="button"
+        class="order-btn cancel-order-btn" 
+        @click="goBackToOrder"
+        aria-label="Назад"
+      >
+        <span class="btn-text">← Назад</span>
+      </button>
+      <button
+        type="button"
+        class="order-btn create-order-btn" 
+        :class="{ 'disabled': disabledAddToOrderButton }"
+        @click="addToOrder"
+        aria-label="Добавить в заказ"
+      >
+        <span class="btn-text">Добавить в заказ</span>
+      </button>
+      <!-- <ConfirmModal :isOpen="showConfirmCreate" title="Добавление позиций в заказ"
+        message="Добавить в заказ?" confirmText="Да" @confirm="goBackToOrder"
+        @close="showConfirmCreate = false"
+      /> -->
+    </div>
   </div>
 </template>
 
 <script>
+
 import MenuListItem from './MenuListItem.vue';
+// import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 
 export default {
   name: 'MenuList',
   components: {
-    MenuListItem
-  },
-  props: {
-    // Пропс для текущей активной категории меню
-    activeCategory: {
-      type: String,
-      required: true,
-      default: 'all'
-    }
+    MenuListItem,
+    // ConfirmModal,
   },
   emits: ['select-item', 'update:activeCategory'],
   data() {
     return {
+      activeCategory: 'all',
+      activeSubCategory: '',
       items: [],
       searchQuery: '',
       isLoading: false,
       error: null,
       // Локальный список табов для отображения сверху
       tabs: [
-        { id: 1, label: 'Всё меню', value: 'all' },
-        { id: 2, label: 'Пицца', value: 'pizza' },
-        { id: 3, label: 'Бургеры', value: 'burgers' },
-        { id: 4, label: 'Закуски', value: 'snacks' },
-        { id: 5, label: 'Напитки', value: 'drinks' }
-      ]
+        { id: 1, label: 'Всё меню', value: 'all'},
+        { id: 2, label: 'Коктейли', value: 'cocktails' },
+        { id: 3, label: 'Безалкогольные', value: 'non-alc' },
+        { id: 4, label: 'Стопки', value: 'stacks',
+          subtabs: [
+            { id: 1, label: 'Алко на выбор', value: 'on-choice' },
+            { id: 2, label: 'Шоты', value: 'shots' },
+            { id: 3, label: 'Настойки', value: 'tinctures' },
+          ]
+        },
+        { id: 5, label: 'Кухня', value: 'kitchen' },
+      ],
+
+      preorder: [],
     };
   },
   computed: {
+    activeTab() {
+      return this.tabs.find(tab => tab.value === this.activeCategory) ?? {}
+    },
+
+    activeCategorySubtabs() {
+      return this.activeTab?.subtabs ?? []
+    },
+
+    disabledAddToOrderButton() {
+      return !this.$store.state.preOrderItems.length
+    },
+
+    isActiveCreate() {
+      return this.$store.state.isActiveCreate
+    },
+
     // Двойная фильтрация: сначала по табу, затем по поисковой строке
     filteredItems() {
       let result = this.items;
@@ -115,6 +171,11 @@ export default {
       // 1. Фильтрация по табу (если выбран не 'all')
       if (this.activeCategory !== 'all') {
         result = result.filter(item => item.category === this.activeCategory);
+      }
+
+      // 1. Фильтрация по табу (если выбран не 'all')
+      if (this.activeSubCategory !== '') {
+        result = result.filter(item => item.subCategory === this.activeSubCategory);
       }
 
       // 2. Фильтрация по поиску
@@ -132,6 +193,18 @@ export default {
     this.fetchItems();
   },
   methods: {
+    goBackToOrder() {
+      console.log('goBackToOrder');
+      this.$store.dispatch('clearPreOrderItems')
+      this.$router.push('/order/create')
+    },
+
+    addToOrder() {
+      console.log('addToOrder');
+      this.$store.dispatch('addToOrder')
+      this.goBackToOrder()
+    },
+
     async fetchItems() {
       this.isLoading = true;
       this.error = null;
@@ -142,38 +215,134 @@ export default {
         this.items = [
           {
             id: 1,
-            title: 'Пицца Маргарита',
+            title: 'Голубая лагуна',
             price: 450,
-            category: 'pizza',
-            ingredients: [{ name: 'Моцарелла', amount: '150г' }, { name: 'Томаты', amount: '100г' }]
+            category: 'cocktails',
+            ingredients: [
+              { id: 1, name: 'Вода Газ', amount: '200' },
+              { id: 2, name: 'Брю кюрасао', amount: '50' },
+              { id: 10, name: 'Лёд', amount: '100' },
+              { id: 11, name: 'Стакан пластик 400', amount: '1' },
+              { id: 12, name: 'Трубочка', amount: '1' },
+              { id: 13, name: 'Ананас', amount: '1' },
+              { id: 14, name: 'Водка', amount: '45' },
+            ]
           },
           {
             id: 2,
             title: 'Бургер Классический',
             price: 380,
-            category: 'burgers',
-            ingredients: [{ name: 'Котлета', amount: '120г' }, { name: 'Чеддер', amount: '1 шт' }]
+            category: 'kitchen',
+            ingredients: [{ id: 3, name: 'Котлета', amount: '120г' }, { id: 4, name: 'Чеддер', amount: '1 шт' }]
           },
           {
             id: 3,
             title: 'Салат Цезарь',
             price: 320,
-            category: 'snacks',
-            ingredients: [{ name: 'Курица', amount: '100г' }, { name: 'Пармезан', amount: '20г' }]
+            category: 'kitchen',
+            ingredients: [{ id: 5, name: 'Курица', amount: '100г' }, { id: 6, name: 'Пармезан', amount: '20г' }]
           },
           {
             id: 4,
             title: 'Картофель Фри',
             price: 150,
-            category: 'snacks',
-            ingredients: [{ name: 'Картофель', amount: '150г' }]
+            category: 'kitchen',
+            ingredients: [{ id: 7, name: 'Картофель', amount: '150г' }]
+          },
+
+
+          
+          {
+            id: 20,
+            title: 'Водка',
+            price: 150,
+            category: 'stacks',
+            subCategory: 'on-choice',
+            ingredients: [{ id: 14, name: 'Водка', amount: '50' }]
           },
           {
+            id: 21,
+            title: 'Ром',
+            price: 150,
+            category: 'stacks',
+            subCategory: 'on-choice',
+            ingredients: [{ id: 25, name: 'Ром', amount: '50' }]
+          },
+          {
+            id: 22,
+            title: 'Джин',
+            price: 150,
+            category: 'stacks',
+            subCategory: 'on-choice',
+            ingredients: [{ id: 26, name: 'Джин', amount: '50' }]
+          },
+
+          
+          {
+            id: 30,
+            title: 'Шот с водкой',
+            price: 250,
+            category: 'stacks',
+            subCategory: 'shots',
+            ingredients: [{ id: 14, name: 'Водка', amount: '50' }, { id: 40, name: 'Выбор сиропа' }]
+          },
+          {
+            id: 31,
+            title: 'Шот с водкой',
+            price: 150,
+            category: 'stacks',
+            subCategory: 'shots',
+            ingredients: [{ id: 14, name: 'Водка', amount: '50' }, { id: 40, name: 'Выбор сиропа' }]
+          },
+          {
+            id: 32,
+            title: 'Шот с водкой',
+            price: 150,
+            category: 'stacks',
+            subCategory: 'shots',
+            ingredients: [{ id: 14, name: 'Водка', amount: '50' }, { id: 40, name: 'Выбор сиропа' }]
+          },
+
+
+          {
+            id: 33,
+            title: 'Облепиха',
+            price: 250,
+            category: 'stacks',
+            subCategory: 'tinctures',
+            ingredients: [{ id: 33, name: 'Облепиха', amount: '50' }]
+          },
+          {
+            id: 34,
+            title: 'Малина',
+            price: 250,
+            category: 'stacks',
+            subCategory: 'tinctures',
+            ingredients: [{ id: 34, name: 'Малина', amount: '50' }]
+          },
+          {
+            id: 35,
+            title: 'Перцовка',
+            price: 250,
+            category: 'stacks',
+            subCategory: 'tinctures',
+            ingredients: [{ id: 35, name: 'Перцовка', amount: '50' }]
+          },
+
+
+          {
             id: 5,
-            title: 'Лимонад Домашний',
-            price: 180,
-            category: 'drinks',
-            ingredients: [{ name: 'Лимон', amount: '50г' }, { name: 'Мята', amount: '5г' }]
+            title: 'Лимонад',
+            price: 250,
+            category: 'non-alc',
+            ingredients: [
+              { id: 11, name: 'Стакан пластик 400', amount: '1' },
+              { id: 12, name: 'Трубочка', amount: '1' },
+              { id: 9, name: 'Мята', amount: '5г' },
+              { id: 9, name: 'Мята', amount: '5г' },
+              { id: 9, name: 'Мята', amount: '5г' },
+              { id: 9, name: 'Мята', amount: '5г' },
+            ]
           }
         ];
       } catch (err) {
@@ -185,7 +354,15 @@ export default {
     },
     // Клик по табу сообщает родителю о смене пропса через паттерн v-model
     handleTabClick(categoryValue) {
-      this.$emit('update:activeCategory', categoryValue);
+      this.activeCategory = categoryValue;
+      if (this.activeCategorySubtabs.length) {
+        this.activeSubCategory = this.activeCategorySubtabs[0]?.value ?? ''
+      } else {
+        this.activeSubCategory = ''
+      }
+    },
+    handleSubtabClick(subCategoryValue) {
+      this.activeSubCategory = subCategoryValue;
     },
     handleItemClick(item) {
       this.$emit('select-item', item);
@@ -209,7 +386,7 @@ export default {
   overflow: hidden;
 }
 
-.tabs-scroll-wrapper {
+.tabs-scroll-wrapper, .subtabs-scroll-wrapper {
   display: flex;
   gap: 8px;
   overflow-x: auto; /* Позволяет скроллить табы пальцем по горизонтали */
@@ -221,10 +398,10 @@ export default {
   display: none; /* Прячет стандартный скроллбар в Chrome/Safari/iOS */
 }
 
-.tab-button {
+.tab-button, .subtab-button {
   white-space: nowrap; /* Не дает тексту внутри кнопок переноситься */
-  padding: 8px 16px;
-  font-size: 14px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
   font-weight: 500;
   color: #8e8e93;
   background-color: #f2f2f7;
@@ -235,8 +412,14 @@ export default {
   -webkit-tap-highlight-color: transparent;
 }
 
+.subtab-button {
+  margin-top: 0.8rem;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+
 /* Стили активного таба */
-.tab-button--active {
+.tab-button--active, .subtab-button--active {
   color: #ffffff;
   background-color: #007aff; /* Акцентный синий */
   font-weight: 600;
@@ -296,6 +479,7 @@ export default {
 /* --- Сетка --- */
 .menu-list-grid {
   display: grid;
+  margin-bottom: 4rem;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   width: 100%;
@@ -335,6 +519,85 @@ export default {
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 12px;
+}
+
+.order-button-wrapper {
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 12px 16px;
+  /* Безопасные отступы для безрамочных экранов (iPhone с Notch / Dynamic Island) */
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(to top, rgba(255, 255, 255, 1) 80%, rgba(255, 255, 255, 0) 100%);
+  box-sizing: border-box;
+  z-index: 100;
+}
+
+.order-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  color: #ffffff;
+  border: none;
+  border-radius: 16px; /* Современное мобильное скругление, как у карточек */
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  box-shadow: 0 4px 12px rgba(52, 199, 89, 0.2);
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.2s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent; /* Убирает стандартную синюю рамку тапа в Safari */
+}
+.cancel-order-btn {
+  background-color: red; /* Приятный, нативный зеленый цвет (iOS Apple Green) */
+}
+
+/* Сама зеленая кнопка во всю ширину */
+.create-order-btn {
+  background-color: #34c759; /* Приятный, нативный зеленый цвет (iOS Apple Green) */
+}
+
+.create-order-btn.disabled {
+  background-color: #b7b5b5;
+  pointer-events: none;
+}
+
+/* Мобильный визуальный отклик при нажатии (кнопка слегка темнеет и утапливается) */
+.create-order-btn:active {
+  background-color: #28a745;
+  transform: scale(0.98); 
+  box-shadow: 0 2px 6px rgba(52, 199, 89, 0.2);
+}
+
+/* Стиль для заблокированного состояния */
+.create-order-btn:disabled {
+  background-color: #e5e5ea;
+  color: #aeaea3;
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+}
+
+/* Минималистичная SVG иконка */
+.btn-icon {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.2s;
+}
+.btn-text {
+ font-size: 1rem;
+}
+
+/* Эффект движения стрелочки при нажатии */
+.create-order-btn:active .btn-icon {
+  transform: translateX(2px);
 }
 
 @keyframes spin {

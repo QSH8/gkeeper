@@ -1,7 +1,12 @@
 import { api } from '@utils'
 
-function onFinishOrderAPI(orderId) {
-  console.log('onFinishOrderAPI, orderId ->', orderId)
+async function onFinishOrderAPI(orderId) {
+  console.log('API: onFinishOrderAPI, orderId ->', orderId)
 }
 
-export { onFinishOrderAPI }
+async function addNewOrderToQueueAPI(order) {
+  console.log('API: addNewOrderToQueueAPI, order ->', order)
+  return 'MOCK_ID'
+}
+
+export { onFinishOrderAPI, addNewOrderToQueueAPI }

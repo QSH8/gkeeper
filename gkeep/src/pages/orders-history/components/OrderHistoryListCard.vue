@@ -11,9 +11,8 @@
     <div class="order-body">
       <p class="order-items">{{ order.items }}</p>
     </div>
-
     <div class="order-body__info">
-      <div class="order-body__info-wrapper">
+      <div>
         <p class="order-body__info-item">Принят: <span>{{ formatDate(order.createdAt)  }}, {{ order.whoCreate }}</span></p>
         <p class="order-body__info-item">Завершён: <span>{{ formatDate(order.finishedAt)  }}, {{ order.whoFinish }}</span></p>
       </div>
@@ -21,30 +20,32 @@
 
     <div class="order-footer">
       <span class="order-price">{{ order.price }} ₽</span>
-      <button class="details-btn" @click.stop="showConfirmModal(order.id)">
+      <!-- <button class="details-btn" @click.stop="showConfirmModal(order.id)">
         Завершить
-      </button>
+      </button> -->
     </div>
   </div>
-  <ConfirmModal :isOpen="showConfirm" title="Завершение заказа"
+  <!-- <ConfirmModal :isOpen="showConfirm" title="Завершение заказа"
     message="Точно завершить? Перед завершением проверь оплату" confirmText="Завершить" @confirm="finishOrder"
-    @close="showConfirm = false" />
+    @close="showConfirm = false" /> -->
 </template>
 
 <script>
 import { toast } from 'vue3-toastify';
 import { onFinishOrderAPI } from "@api"
-import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 import { formatDate } from '@/services';
+import { ORDER_STATUSES } from '@/constants';
+// import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 
 export default {
-  name: 'OrderQueueListCard',
+  name: 'OrderHistoryListCard',
   components: {
-    ConfirmModal,
+    // ConfirmModal,
   },
   emits: ['finish-order'],
   data() {
     return {
+      ORDER_STATUSES,
       showConfirm: false,
       confirmModalData: null,
       formatDate,
@@ -89,8 +90,6 @@ export default {
 
 .order-card.priority {
   border: 2px solid gold;
-  box-shadow: 0 4px 12px gold(0, 0, 0, 0.);
-
 }
 
 .order-card:active {
@@ -107,25 +106,25 @@ export default {
 .order-id {
   font-weight: bold;
   color: #888;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
 }
 
 .order-status {
   font-weight: bold;
   color: #dc3545;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
 }
 
 .order-status_priority {
-  display: inline-block;
   font-weight: bold;
   color: #7b1fa2;
-  margin-left: 8px;
+  margin-left: 1rem;
   border-radius: 10px;
   padding: 0.25rem 0.5rem;
   background-color: #f3e5f5;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
 }
+
 .status-badge {
   padding: 4px 10px;
   border-radius: 20px;
@@ -146,7 +145,6 @@ export default {
   font-size: 0.7rem;
   color: #666;
 }
-
 .order-body__info-item span {
   font-weight: 700;
 }
@@ -163,8 +161,6 @@ export default {
   font-size: 0.9rem;
   color: #666;
 }
-
-
 
 .order-footer {
   display: flex;

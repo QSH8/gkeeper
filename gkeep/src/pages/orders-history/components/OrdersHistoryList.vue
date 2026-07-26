@@ -4,7 +4,7 @@
       <!-- Список карточек -->
       <div v-if="orders.length > 0" class="orders-list">
         <template v-for="order in orders" :key="order.id">
-          <OrderQueueListCard :order="order" />
+          <OrderHistoryListCard :order="order" />
         </template>
       </div>
 
@@ -17,18 +17,18 @@
 </template>
 
 <script>
-import OrderQueueListCard from './OrderQueueListCard.vue';
+import OrderHistoryListCard from './OrderHistoryListCard.vue';
 import { ORDER_STATUSES } from '../../../constants/index.js'
 
 export default {
-  name: 'OrdersQueueList',
+  name: 'OrdersHistoryList',
   components: {
-    OrderQueueListCard,
+    OrderHistoryListCard,
   },
   data() {
     return {
       ORDER_STATUSES,
-      orders: [ //MOCKS
+      orders: [ // MOCKS!
         { id: 101, customer: 'Иван Иванов', items: '2x Бургер, 1x Кола', price: 850, status: 'in_progress', createdAt: '2026-07-09T19:05:26', finishedAt: '2026-07-09T19:05:26',whoCreate: 'Дима', whoFinish: 'Дима', priority: true },
         { id: 102, customer: 'Анна Петрова', items: '1x Пицца Маргарита', price: 620, status: 'completed', createdAt: '2026-07-09T19:05:26', finishedAt: '2026-07-09T20:00:26',whoCreate: 'Дима', whoFinish: 'Саша' },
         { id: 103, customer: 'Дмитрий Сидоров', items: '3x Сет роллов', price: 1500, status: 'completed', createdAt: '2026-07-09T19:05:26', finishedAt: '2026-07-09T21:05:26',whoCreate: 'Дима', whoFinish: 'Миша' },

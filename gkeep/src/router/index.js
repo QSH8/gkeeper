@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import store from '@/store/index.js'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,6 +16,9 @@ const router = createRouter({
             translation: 'Очередь заказов',
           },
           component: () => import('../pages/orders-queue/index.vue'),
+          beforeEnter: async () => {
+            await store.dispatch('setInactiveCreate')
+          } 
         },
         {
           path: '/order/:id',
@@ -23,6 +27,20 @@ const router = createRouter({
             translation: 'Заказ',
           },
           component: () => import('../pages/order/index.vue'),
+          beforeEnter: async () => {
+            await store.dispatch('setInactiveCreate')
+          } 
+        },
+        {
+          path: '/order/create',
+          name: 'OrderCreate',
+          meta: {
+            translation: 'Создание заказа',
+          },
+          component: () => import('../pages/order/components/OrderCreate.vue'),
+          beforeEnter: async () => {
+            await store.dispatch('setActiveCreate')
+          } 
         },
         {
           path: '/orders-history',
@@ -31,6 +49,9 @@ const router = createRouter({
             translation: 'История заказов',
           },
           component: () => import('../pages/orders-history/index.vue'),
+          beforeEnter: async () => {
+            await store.dispatch('setInactiveCreate')
+          } 
         },
         {
           path: '/menu',
@@ -47,6 +68,9 @@ const router = createRouter({
             translation: 'Склад',
           },
           component: () => import('../pages/warehouse/index.vue'),
+          beforeEnter: async () => {
+            await store.dispatch('setInactiveCreate')
+          } 
         },
         {
           path: '/profile',
@@ -55,6 +79,9 @@ const router = createRouter({
             translation: 'Профиль',
           },
           component: () => import('../pages/profile/index.vue'),
+          beforeEnter: async (to, from, next) => {
+            await store.dispatch('setInactiveCreate')
+          } 
         },
       ],
     },
