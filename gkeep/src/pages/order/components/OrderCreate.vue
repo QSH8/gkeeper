@@ -3,7 +3,7 @@
     <!-- 1. Поле: Приоритетный -->
     <div class="form-group">
       <label class="form-checkbox-label">
-        <input v-model="form.isPriority" type="checkbox" class="form-checkbox-real">
+        <input v-model="form.isPriority" @change="onChangeIsPriority('isPriority', $event.target.value)" type="checkbox" class="form-checkbox-real">
         <span class="form-checkbox-custom" />
         <span class="form-checkbox-text">Приоритетный</span>
       </label>
@@ -134,6 +134,11 @@ export default {
     }
   },
   methods: {
+    onChangeIsPriority(fieldName, value) {
+      console.log('onUpdateIsPriority', this.form[fieldName])
+      this.$store.dispatch('updateOrderInfo', { fieldName, fieldValue: this.form[fieldName] })
+
+    },
     addNewOrderToQueue() {
       this.$store.dispatch('addNewOrderToQueue')
 

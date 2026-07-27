@@ -1,33 +1,15 @@
 <template>
-  <div>
-    Склад
-  </div>
-  <div>
-    Склад
-  </div>
-  <div>
-    Склад
-  </div>
-  <div>
-    Склад
-  </div>
-  <div>
-    Склад
-  </div>
-  <div>
-    Склад
-  </div>
-  <div>
-    Склад
-  </div>
-  <div>
-    Склад
-  </div>
+  <WarehouseList />
 </template>
 
 <script>
+import WarehouseList from './components/WarehouseList.vue';
+
 export default {
   name: 'Warehouse',
+  components: {
+    WarehouseList,
+  }
 }
 </script>
 

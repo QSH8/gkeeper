@@ -3,13 +3,15 @@
     <div class="order-header">
       <div>
         <span class="order-id">#{{ order.id }}</span> | <span class="order-status">{{ ORDER_STATUSES?.[order.status] || 'Завершён' }}</span>
-        <span v-if="order.priority" class="order-status_priority">{{ 'Приоритетный' || '' }}</span>
+        <span v-if="order.priority" class="order-status_priority">{{ 'Приоритет' || '' }}</span>
       </div>
       <span class="customer-name">{{ order.customer }}</span>
     </div>
 
     <div class="order-body">
-      <p class="order-items">{{ order.items }}</p>
+      <p v-for="item in order.items" :key="item.id" class="order-item">
+        <span class="order-body__quantity">{{ item.quantity }}x</span> <span>{{ item.name }}</span>
+      </p>
     </div>
 
     <div class="order-body__info">
@@ -36,6 +38,7 @@ import { toast } from 'vue3-toastify';
 import { onFinishOrderAPI } from "@api"
 import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 import { formatDate } from '@/services';
+import { ORDER_STATUSES } from '@/constants';
 
 export default {
   name: 'OrderQueueListCard',
@@ -48,6 +51,7 @@ export default {
       showConfirm: false,
       confirmModalData: null,
       formatDate,
+      ORDER_STATUSES,
     }
   },
   props: {
@@ -89,8 +93,7 @@ export default {
 
 .order-card.priority {
   border: 2px solid gold;
-  box-shadow: 0 4px 12px gold(0, 0, 0, 0.);
-
+  box-shadow: 0 4px 12px gold(0, 0, 0, 0.2);
 }
 
 .order-card:active {
@@ -119,12 +122,12 @@ export default {
 .order-status_priority {
   display: inline-block;
   font-weight: bold;
-  color: #7b1fa2;
+  color: #414141;
   margin-left: 8px;
   border-radius: 10px;
-  padding: 0.25rem 0.5rem;
-  background-color: #f3e5f5;
-  font-size: 0.75rem;
+  padding: 0 0.5rem;
+  background-color: gold;
+  font-size: 0.7rem;
 }
 .status-badge {
   padding: 4px 10px;
@@ -135,6 +138,9 @@ export default {
 
 .order-body {
   margin-bottom: 16px;
+}
+.order-body__quantity {
+  font-weight: 600;
 }
 
 .order-body__info {
@@ -153,12 +159,13 @@ export default {
 
 .customer-name {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 600;
+  text-align: end;
   color: #222;
 }
 
-.order-items {
+.order-item {
   margin: 4px 0 0;
   font-size: 0.9rem;
   color: #666;

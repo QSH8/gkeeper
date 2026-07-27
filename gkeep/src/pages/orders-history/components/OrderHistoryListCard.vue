@@ -3,13 +3,15 @@
     <div class="order-header">
       <div>
         <span class="order-id">#{{ order.id }}</span> | <span class="order-status">{{ ORDER_STATUSES?.[order.status] || 'Завершён' }}</span>
-        <span v-if="order.priority" class="order-status_priority">{{ 'Приоритетный' || '' }}</span>
+        <p v-if="order.priority" class="order-status_priority">{{ 'Приоритет' || '' }}</p>
       </div>
       <span class="customer-name">{{ order.customer }}</span>
     </div>
 
     <div class="order-body">
-      <p class="order-items">{{ order.items }}</p>
+      <p v-for="item in order.items" :key="item.id" class="order-item">
+        <span class="order-body__quantity">{{ item.quantity }}x</span> <span>{{ item.name }}</span>
+      </p>
     </div>
     <div class="order-body__info">
       <div>
@@ -106,23 +108,24 @@ export default {
 .order-id {
   font-weight: bold;
   color: #888;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 }
 
 .order-status {
   font-weight: bold;
   color: #dc3545;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 }
 
 .order-status_priority {
+  display: inline-block;
   font-weight: bold;
-  color: #7b1fa2;
-  margin-left: 1rem;
+  color: #414141;
+  margin-left: 8px;
   border-radius: 10px;
-  padding: 0.25rem 0.5rem;
-  background-color: #f3e5f5;
-  font-size: 0.8rem;
+  padding: 0 0.5rem;
+  background-color: gold;
+  font-size: 0.7rem;
 }
 
 .status-badge {
@@ -134,6 +137,16 @@ export default {
 
 .order-body {
   margin-bottom: 16px;
+}
+
+.order-body__quantity {
+  font-weight: 600;
+}
+
+.order-item {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: #666;
 }
 
 .order-body__info {
@@ -151,8 +164,9 @@ export default {
 
 .customer-name {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 600;
+  text-align: end;
   color: #222;
 }
 

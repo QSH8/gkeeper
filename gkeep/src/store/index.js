@@ -1,7 +1,14 @@
 import { createStore } from 'vuex';
 import { toast } from 'vue3-toastify';
-import { mergeArraysByQuantity, formatNewOrderRequest } from '../services/index.js'
-import { addNewOrderToQueueAPI } from '../api/index.js'
+import { mergeArraysByQuantity, formatNewOrderRequest, sortWithPriorityAndDate, sortArrayByCreatedAtDate } from '../services/index.js'
+import {
+  addNewOrderToQueueAPI,
+  createWarehouseItemAPI,
+  editWarehouseItemAPI,
+  fetchWarehouseListAPI,
+  fetchOrdersListAPI
+} from '../api/index.js'
+
 export default createStore({
   state() {
     return {
@@ -9,10 +16,31 @@ export default createStore({
       preOrderItems: [],
       orderInfo: {},
       isActiveCreate: false,
+      ordersList: [],
+
+      // Warehouse
+      warehouseItems: [],
     };
   },
   
   getters: {
+    // //Warehouse
+    // // Возвращает весь список товаров на складе
+    // allWarehouseItems: (state) => state.warehouseItems,
+    
+    // // Пример полезного геттера: поиск конкретного ингредиента по ID
+    // getIngredientById: (state) => (id) => {
+    //   return state.warehouseItems.find(item => item.id === id);
+    // },
+
+    ordersQueueList: (state) => {
+      return sortWithPriorityAndDate(state.ordersList)
+    },
+
+    ordersHistoryList: (state) => {
+      return sortArrayByCreatedAtDate(state.ordersList, 'DESC')
+    },
+
     getItemById: (state) => (itemId) => {
       return state.preOrderItems.find(item => item.id === itemId)
     },
@@ -35,6 +63,28 @@ export default createStore({
   },
   
   mutations: {
+    // Warehouse start
+
+    // Запись всего списка в state после успешного GET-запроса
+    SET_WAREHOUSE_ITEMS(state, items) {
+      state.warehouseItems = items;
+    },
+
+    // Опционально: локальное обновление одного элемента (для оптимизации, если нужно)
+    UPDATE_WAREHOUSE_ITEM(state, updatedItem) {
+      const index = state.warehouseItems.findIndex(item => item.id === updatedItem.id);
+      if (index !== -1) {
+        state.warehouseItems[index] = { ...state.warehouseItems[index], ...updatedItem };
+      }
+    },
+
+    // Опционально: локальное добавление элемента в массив
+    ADD_WAREHOUSE_ITEM(state, newItem) {
+      state.warehouseItems.push(newItem);
+    },
+
+    // Warehouse end
+
     SET_ACTIVE_CREATE(state) {
       state.isActiveCreate = true;
     },
@@ -73,10 +123,73 @@ export default createStore({
 
     UPDATE_ORDER_INFO(state, { fieldName, fieldValue }) {
       state.orderInfo[fieldName] = fieldValue
-    }
+    },
+
+    SET_ORDERS_LIST(state, ordersList) {
+      state.ordersList = ordersList
+    },
   },
   
   actions: {
+    async fetchOrdersList({ commit }) {
+      try {
+        const response = await fetchOrdersListAPI()
+
+        if (response.data) {
+          commit('SET_ORDERS_LIST', response.data)
+        }
+      } catch (e) {
+        console.error('Ошибка при загрузке списка заказов:', e);
+      }
+    },
+
+    //Warehouse
+    // 1. Получение списка ингредиентов (GET /warehouse/list)
+    async fetchWarehouseList({ commit }) {
+      try {
+        const response = await fetchWarehouseListAPI();
+        // Передаем полученные данные в мутацию
+        commit('SET_WAREHOUSE_ITEMS', response.data);
+      } catch (error) {
+        console.error('Ошибка при загрузке склада:', error);
+        throw error; // Пробрасываем ошибку, чтобы компонент её отловил
+      }
+    },
+
+    // 2. Редактирование ингредиента (POST /warehouse/edit)
+    // Ожидает объект: { id, name, quantity }
+    async editWarehouseItem({ commit }, payload) {
+      try {
+        await editWarehouseItemAPI({
+          id: payload.id,
+          name: payload.name,
+          quantity: payload.quantity
+        });
+        // Компонент после этого вызовет fetchWarehouseList для полной перерисовки
+      } catch (error) {
+        console.error('Ошибка при редактировании:', error);
+        throw error;
+      }
+    },
+
+    // 3. Создание нового ингредиента (POST /warehouse/create)
+    // Ожидает объект: { name, quantity, unit }
+    async createWarehouseItem({ commit }, payload) {
+      try {
+        await createWarehouseItemAPI({
+          name: payload.name,
+          quantity: payload.quantity,
+          unit: payload.unit
+        });
+        // Компонент после этого вызовет fetchWarehouseList для полной перерисовки
+      } catch (error) {
+        console.error('Ошибка при создании элемента:', error);
+        throw error;
+      }
+    },
+    // Warehouse end
+    
+
     async addNewOrderToQueue({ state }) {
       console.log('addNewOrderToQueue')
       
@@ -100,9 +213,7 @@ export default createStore({
     updateOrderInfo({ commit }, { fieldName, fieldValue }) {
       console.log('updateOrderInfo')
 
-      if (fieldValue) {
-        commit('UPDATE_ORDER_INFO', { fieldName, fieldValue })
-      }
+      commit('UPDATE_ORDER_INFO', { fieldName, fieldValue })
     },
 
     addNewItemInPreOrder({ commit }, item) {

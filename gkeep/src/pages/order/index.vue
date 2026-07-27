@@ -1,14 +1,23 @@
 <template>
   <div class="order-page">
-    <button type="button" class="back-btn" @click="$router.back()">← Назад</button>
-    <h1 class="page-title">Заказ #{{ orderDetail.id }}</h1>
+    <div class="service-buttons">
+      <button type="button" class="back-btn" @click="$router.back()">← Назад</button>
+      <button type="button" class="update-btn" @click="fetchOrderById($route.params.id)">Обновить заказ</button>
+    </div>
+    <h1 class="page-title">Заказ #{{ $route.params.id }}</h1>
+    <div v-if="loading" class="spinner-overlay">
+      <div class="spinner" />
+    </div>
 
     <div v-if="orderDetail.id" class="order-content">
       <div class="info-container">
-        <ul class="info-list">
+        <ul class="info-list" :class="{'priority': orderDetail.priority}">
+          <div v-if="orderDetail.priority" class="info-list__title priority">
+            Приоритет
+          </div>
           <div class="info-list__title">
             <h3 class="info-list__title-text">Информация о заказе</h3>
-            <div class="info-list__title-status">{{ ORDER_STATUSES?.[orderDetail.status] ?? '-' }}</div>
+            <div class="info-list__title-status" :class="itemStatusList(orderDetail.status)">{{ ORDER_STATUSES?.[orderDetail.status] ?? '-' }}</div>
           </div>
 
           <li class="info-list__item">
@@ -65,6 +74,8 @@
       </div>
     </div>
 
+    
+
     <div v-else class="empty-state">Заказ не найден</div>
 
     <ConfirmModal :isOpen="showConfirm" title="Завершение заказа"
@@ -77,7 +88,7 @@
 import { formatDate } from '@services';
 import { coreDate } from '@utils';
 import { toast } from 'vue3-toastify';
-import { onFinishOrderAPI } from "../../api/index.js"
+import { fetchOrderByIdAPI, onFinishOrderAPI } from "../../api/index.js"
 import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 import { ORDER_STATUSES } from '@/constants';
 
@@ -89,6 +100,7 @@ export default {
 
   data() {
     return {
+      loading: true,
       confirmModalData: null,
       showConfirm: false,
       orderDetail: {},
@@ -104,10 +116,18 @@ export default {
 
   // 3. ЖИЗНЕННЫЙ ЦИКЛ
   created() {
-    this.fetchOrder();
+    this.fetchOrderById();
   },
 
   methods: {
+    itemStatusList(status) {
+      return {
+        'in-progress': status === 'in_progress',
+        'deleted': status === 'deleted',
+        'completed': status === 'completed',
+      }
+    },
+
     showConfirmModal(orderId) {
       this.confirmModalData = orderId
       this.showConfirm = true
@@ -123,31 +143,28 @@ export default {
       this.$router.push('/orders-queue')
     },
 
-    fetchOrder() {
-      const idFromUrl = this.$route.params.id;
+    async fetchOrderById() {
+      this.loading = true
 
-      setTimeout(() => {
-        this.orderDetail = {
-          id: Number(idFromUrl),
-          status: 'on_',
-          isFinished: false,
-          createdAt: '2026-07-22T14:30:00',
-          finishedAt: null,
-          customerName: 'Александр Волков',
-          acceptedBy: 'Мария (Администратор)',
-          finishedBy: null,
+      try {
+        const response = await fetchOrderByIdAPI(this.$route.params.id)
+        
+        if (response.data) {
+          setTimeout(() => {
+            this.orderDetail = response.data.info
+            this.orderItems = response.data.items
+
+            this.loading = false
+          }, 500);
         }
-
-        this.orderItems = [
-          { id: 1, name: 'Стейк Рибай', quantity: 1, price: 1200 },
-          { id: 2, name: 'Салат Цезарь', quantity: 2, price: 450 },
-          { id: 3, name: 'Вино сухое', quantity: 1, price: 2100 },
-        ]
-      }, 500);
+      } catch (e) {
+        console.log('Не удалось получить заказ')
+      }
     },
 
     calculateTotal() {
       if (!this.orderDetail) return 0;
+
       return this.orderItems.reduce((acc, item) => {
         return acc + (item.price * item.quantity);
       }, 0);
@@ -164,7 +181,45 @@ export default {
 </script>
 
 <style lang="css" scoped>
-.back-btn {
+.service-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+/* Центрирование лоадера на весь экран */
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7); /* Полупрозрачный фон */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Поверх всех элементов */
+}
+
+/* Стили самой крутилки */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3; /* Цвет фонового кольца */
+  border-top: 5px solid #3498db; /* Цвет бегущей линии */
+  border-radius: 50%;
+  animation: spin 1s linear infinite; /* Анимация вращения */
+}
+
+/* Описание анимации вращения */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.back-btn, .update-btn {
   padding: 0.25rem 0.8rem;
   border-radius: 0.5rem;
   border: none;
@@ -172,6 +227,13 @@ export default {
   border: 1px solid rgba(0, 0, 0, 0.212);
   font-size: 0.8rem;
 }
+
+.update-btn {
+  background-color: #007bff;
+  border: none;
+  color: white;
+}
+
 
 .back-btn:active {
   background-color: rgba(128, 128, 128, 0.226);
@@ -190,6 +252,11 @@ export default {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
+.info-list.priority {
+  border: 2px solid gold;
+  box-shadow: 0 4px 12px gold(0, 0, 0, 0.2);
+}
+
 .info-list__title {
   display: flex;
   flex-direction: row;
@@ -199,8 +266,15 @@ export default {
   margin-bottom: 0.8rem;
   border-bottom: 1px solid #dfe6e9;
 }
-
-.info-list__title-text {}
+.info-list__title.priority {
+  display: block;
+  padding: 0.25rem 0.8rem;
+  text-align: center;
+  color: #414141;
+  font-weight: 700;
+  font-size: 0.8rem;
+  background-color: gold;
+}
 
 .info-list__title-status {
   border-radius: 0.3rem;
@@ -209,6 +283,15 @@ export default {
   background-color: rgb(93, 129, 206);
   font-size: 0.8rem;
   color: white;
+}
+.info-list__title-status.in-progress {
+  background-color: rgb(93, 129, 206);
+}
+.info-list__title-status.deleted {
+  background-color: rgb(206, 93, 108);
+}
+.info-list__title-status.completed {
+  background-color: rgb(253, 149, 107);
 }
 
 .info-list__item {
