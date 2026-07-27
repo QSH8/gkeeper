@@ -79,7 +79,7 @@ const router = createRouter({
             translation: 'Профиль',
           },
           component: () => import('../pages/profile/index.vue'),
-          beforeEnter: async (to, from, next) => {
+          beforeEnter: async () => {
             await store.dispatch('setInactiveCreate')
           } 
         },
