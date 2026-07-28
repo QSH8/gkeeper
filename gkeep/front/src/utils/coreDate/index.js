@@ -1,6 +1,6 @@
 import DayjsAdapter from './adapters/dayjsAdapter.js'
-import Processor from './services/Processor'
-import { FORMATS, DATE_PARTS, DATE_PART_NAMES } from './constants'
+import Processor from './services/Processor.js'
+import { FORMATS, DATE_PARTS, DATE_PART_NAMES } from './constants.js'
 
 export default class CoreDate {
   static #adapter = DayjsAdapter
