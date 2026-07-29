@@ -6,7 +6,7 @@ class BaseRepository {
     this.tableName = tableName;
   }
 
-  async findAll() {
+  async getAll() {
     const { rows } = await this.pool.query(
       `SELECT * FROM ${this.tableName} ORDER BY id ASC`
     );

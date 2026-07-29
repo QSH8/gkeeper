@@ -5,6 +5,21 @@ class WarehouseRepository extends BaseRepository {
     super('warehouse'); // Просто передаем имя таблицы в базовый класс
   }
 
+  async create(dto, dbClient = this.pool) {
+    const query = `
+      INSERT INTO orders (ingredient_name, quantity, units, created_by, created_at, modified_by, modified_at)
+      VALUES ($1, $2, $3, $4, NOW(), $4, NOW())
+      RETURNING *
+    `;
+    const { rows } = await dbClient.query(query, [
+      dto.ingredientName, 
+      dto.quantity, 
+      dto.units,
+      dto.createdBy,
+    ]);
+    return rows[0];
+  }
+
   async getIngredientsForMenuProduct(menuId, dbClient = this.pool) {
     const query = `
       SELECT ingredient_id, quantity_required 

@@ -1,27 +1,27 @@
 import { catchAsync } from '../utils/catchAsync.js';
-import { MenuResponseDTO } from '../dtos/menu.dto.js';
+import { MenuListResponseDTO } from '../dtos/menu.dto.js';
 import { NotFoundError } from '../utils/appErrors.js'
 
 class MenuController {
-  constructor(menuRepository) {
-    this.menuRepository = menuRepository;
+  constructor(repository) {
+    this.repository = repository;
   }
 
   getAll = catchAsync(async (req, res) => {
-    const rows = await this.menuRepository.findAll();
-    res.json(rows.map(row => new MenuResponseDTO(row)));
+    const rows = await this.repository.getAll();
+    res.json(rows.map(row => new MenuListResponseDTO(row)));
   });
 
-  getById = catchAsync(async (req, res) => {
-    const { id } = req.params;
-    const row = await this.menuRepository.findById(id);
+  // getById = catchAsync(async (req, res) => {
+  //   const { id } = req.params;
+  //   const row = await this.repository.findById(id);
     
-    if (!row) {
-      throw new NotFoundError('Позиция меню не найдена');
-    }
+  //   if (!row) {
+  //     throw new NotFoundError('Позиция меню не найдена');
+  //   }
     
-    res.json(new MenuResponseDTO(row));
-  });
+  //   res.json(new MenuResponseDTO(row));
+  // });
 
   // create = catchAsync(async (req, res) => {
   //   const row = await this.menuRepository.create(req.body);

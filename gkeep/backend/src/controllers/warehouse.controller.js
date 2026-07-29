@@ -1,7 +1,7 @@
 import { catchAsync } from '../utils/catchAsync.js';
 import {
+  WarehouseRequestDTO, WarehouseResponseDTO,
   WarehouseCreateRequestDTO, WarehouseCreateResponseDTO,
-  WarehouseResponseDTO, WarehouseResponseDTO,
   WarehouseUpdateRequestDTO, WarehouseUpdateResponseDTO,
 } from '../dtos/warehouse.dto.js';
 
@@ -12,7 +12,7 @@ class WarehouseController {
   
   // Получить весь список склада
   getAll = catchAsync(async (req, res) => {
-    const rows = await this.warehouseRepository.findAll();
+    const rows = await this.warehouseRepository.getAll();
     res.json(rows.map(row => new WarehouseResponseDTO(row)));
   });
 

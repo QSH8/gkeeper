@@ -5,18 +5,45 @@ class OrdersRepository extends BaseRepository {
     super('orders'); // Просто передаем имя таблицы в базовый класс
   }
 
+  async getAllSortByCreatedAt() {
+    const { rows } = await this.pool.query(
+      `SELECT 
+          ${this.tableName}.*, 
+          users.name AS created_by
+      FROM 
+          orders
+      LEFT JOIN 
+          users ON orders.created_by = users.id;`
+    );
+    return rows;
+  }
+
+  async getAll() {
+    const { rows } = await this.pool.query(
+      `SELECT 
+          ${this.tableName}.*, 
+          users.name AS created_by
+      FROM 
+          orders
+      LEFT JOIN 
+          users ON orders.created_by = users.id;`
+    );
+    return rows;
+  }
+
   async create(dto, dbClient = this.pool) {
     const query = `
-      INSERT INTO orders (customer_name, comments, payment_method, is_priority, created_by, created_at, modified_by, modified_at)
-      VALUES ($1, $2, $3, $4, $5, NOW(), $5, NOW())
+      INSERT INTO orders (customer_name, comments, payment_method, is_priority, created_by, modified_by)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *
     `;
     const { rows } = await dbClient.query(query, [
-      dto.customerName, 
+      dto.customer_name, 
       dto.comments, 
-      dto.paymentMethod, 
-      dto.isPriority,
-      dto.createdBy
+      dto.payment_method, 
+      dto.is_priority,
+      dto.created_by,
+      dto.modified_by,
     ]);
     return rows[0];
   }

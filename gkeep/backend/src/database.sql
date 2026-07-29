@@ -1,3 +1,5 @@
+-- DROP TABLE IF EXISTS menu_ingredients CASCADE;
+
 -- 1. Таблица сотрудников (для логирования created_by / finished_by)
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
@@ -9,23 +11,24 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS menu (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    price NUMERIC(10, 2) NOT NULL,
+    price INT NOT NULL,
     is_available BOOLEAN DEFAULT true
 );
 
 -- 3. Таблица ингредиентов на складе
 CREATE TABLE IF NOT EXISTS warehouse (
     id SERIAL PRIMARY KEY,
-    ingredient_name VARCHAR(255) NOT NULL UNIQUE,
-    quantity NUMERIC(10, 3) NOT NULL DEFAULT 1 -- Храним в кг/литрах/штуках с точностью до грамма
+    name VARCHAR(255) NOT NULL UNIQUE,
+    quantity INT NOT NULL DEFAULT 1,
+    units VARCHAR(20) NOT NULL DEFAULT 'шт'
 );
 
 -- 4. Связующая таблица: Рецепты (какие ингредиенты нужны для блюда из меню)
 CREATE TABLE IF NOT EXISTS menu_ingredients (
+    id SERIAL PRIMARY KEY,
     menu_id INT REFERENCES menu(id) ON DELETE CASCADE,
     ingredient_id INT REFERENCES warehouse(id) ON DELETE CASCADE,
-    quantity_required NUMERIC(10, 3) NOT NULL, -- Сколько нужно ингредиента на 1 порцию блюда
-    PRIMARY KEY (menu_id, ingredient_id)
+    quantity_required INT NOT NULL
 );
 
 -- 5. Таблица заказов
@@ -35,15 +38,15 @@ CREATE TABLE IF NOT EXISTS orders (
     comments TEXT,
     payment_method VARCHAR(50) NOT NULL,
     is_priority BOOLEAN DEFAULT false,
-    status VARCHAR(50) DEFAULT 'pending', -- pending, cooking, finished, cancelled
+    status VARCHAR(50) DEFAULT 'in_progress',
     
     -- Системные поля логирования
-    created_at TIMESTAMP DEFAULT NOW(),
-    modified_at TIMESTAMP DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    modified_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    finished_at TIMESTAMP WITH TIME ZONE,
     modified_by INT REFERENCES users(id) ON DELETE SET NULL,
-    created_by INT REFERENCES users(id) ON DELETE SET NULL, -- ID того, кто создал
-    finished_at TIMESTAMP,                                  -- Проставляется при закрытии
-    finished_by INT REFERENCES users(id) ON DELETE SET NULL  -- ID того, кто закрыл
+    created_by INT REFERENCES users(id) ON DELETE SET NULL,
+    finished_by INT REFERENCES users(id) ON DELETE SET NULL
 );
 
 -- 6. Связующая таблица: Содержимое заказа (что конкретно купили)

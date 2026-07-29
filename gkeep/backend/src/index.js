@@ -1,7 +1,7 @@
 import express from 'express';
 import menuRouter from './routes/menu.routes.js';
 import warehouseRouter from './routes/warehouse.routes.js';
-import orderRouter from './routes/order.routes.js';
+import orderRouter from './routes/orders.routes.js';
 import { catchAsync } from './utils/catchAsync.js';
 import { errorMiddleware } from './middlewares/error.middleware.js';
 import { initDatabase } from './config/db.js';
@@ -27,6 +27,13 @@ app.get('/api/status', catchAsync(async (req, res) => {
     });
   })
 );
+
+// ЧТО ДОБАВИЛОСЬ: Перехват 404 и передача в middleware ошибок
+app.use((req, res, next) => {
+    const error = new Error(`Маршрут ${req.originalUrl} не найден`);
+    error.status = 404; // Можно задать статус для вашей middleware
+    next(error); // Передаем ошибку дальше в errorMiddleware
+});
 
 app.use(errorMiddleware);
 

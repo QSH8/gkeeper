@@ -1,19 +1,12 @@
 import { Router } from 'express';
 import menuController from '../controllers/menu.controller.js';
 
-class MenuRouter {
-  constructor() {
-    this.router = Router();
-    this.initializeRoutes();
-  }
+const router = Router();
 
-  initializeRoutes() {
-    this.router.get('/', menuController.getAll);
-    this.router.get('/:id', menuController.getById);
-    this.router.post('/сreate', menuController.create);
-    this.router.post('/update', menuController.update);
-    this.router.post('/delete', menuController.delete);
-  }
-}
+router.get('/list', menuController.getAll);
+// router.get('/:id', menuController.getById);
+// router.post('/сreate', menuController.create);
+// router.post('/update', menuController.update);
+// router.post('/delete', menuController.delete);
 
-export default new MenuRouter().router;
+export default router;

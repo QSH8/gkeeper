@@ -16,7 +16,7 @@ const pool = new pg.Pool({
 
 export const initDatabase = async () => {
   try {
-    const sqlPath = path.join(process.cwd(), 'init.sql');
+    const sqlPath = path.join(process.cwd(), 'src/database.sql');
     const sql = fs.readFileSync(sqlPath, 'utf8');
     
     await pool.query(sql);

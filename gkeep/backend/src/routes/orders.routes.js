@@ -4,6 +4,7 @@ import ordersController from '../controllers/orders.controller.js';
 const router = Router();
 
 // Создать заказ: POST /api/orders/create
+router.get('/list', ordersController.getAll);
 router.post('/create', ordersController.create);
 
 // Обновить заказ: PUT /api/orders/1
