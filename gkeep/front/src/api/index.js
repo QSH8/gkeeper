@@ -1,9 +1,17 @@
-import { api } from '@utils'
+import API from '@/utils/api/index.js'
 
 async function fetchOrderByIdAPI(orderId) {
   // '/order' by id
   console.log('API: fetchOrderByIdAPI, orderId ->', orderId)
 
+  // return new Promise((resolve, reject) => {
+  //   API.QUERY({
+  //     method: 'get',
+  //     url: `/orders/list`,
+  //   })
+  //     .then((response) => resolve(response.data.data))
+  //     .catch((error) => reject(error))
+  // })
   return ({
     data: {
       info: {
@@ -27,44 +35,28 @@ async function fetchOrderByIdAPI(orderId) {
 }
 
 async function fetchOrdersListAPI() {
-  '/orders/list'
   console.log('API: fetchOrdersListAPI')
-  return ({
-    data: [
-      { id: 101, customer: 'Иван Иванов',
-        items:  [
-          { id: 1, name: 'Стейк Рибай', quantity: 1, price: 1200 },
-          { id: 2, name: 'Салат Цезарь', quantity: 2, price: 450 },
-          { id: 3, name: 'Вино сухое', quantity: 1, price: 2100 },
-        ],
-        price: 850, status: 'in_progress', createdAt: '2026-07-09T19:00:26', finishedAt: '2026-07-09T19:05:26',whoCreate: 'Дима', whoFinish: 'Дима'
-      },
-      { id: 102, customer: 'Анна Петрова', items:  [
-        { id: 1, name: 'Стейк Рибай', quantity: 1, price: 1200 },
-        { id: 2, name: 'Салат Цезарь', quantity: 2, price: 450 },
-        { id: 3, name: 'Вино сухое', quantity: 1, price: 2100 },
-      ], price: 620, status: 'completed', createdAt: '2026-07-09T19:00:26', finishedAt: '2026-07-09T20:00:26',whoCreate: 'Дима', whoFinish: 'Саша' },
-      { id: 103, customer: 'Дмитрий Сидоров', items:  [
-        { id: 1, name: 'Стейк Рибай', quantity: 1, price: 1200 },
-        { id: 2, name: 'Салат Цезарь', quantity: 2, price: 450 },
-        { id: 3, name: 'Вино сухое', quantity: 1, price: 2100 },
-      ], price: 1500, status: 'completed', createdAt: '2026-07-09T19:20:26', finishedAt: '2026-07-09T21:05:26',whoCreate: 'Дима', whoFinish: 'Миша', priority: true },
-      { id: 104, customer: 'Дмитрий 1', items:  [
-        { id: 1, name: 'Стейк Рибай', quantity: 1, price: 1200 },
-        { id: 2, name: 'Салат Цезарь', quantity: 2, price: 450 },
-        { id: 3, name: 'Вино сухое', quantity: 1, price: 2100 },
-      ], price: 1500, status: 'deleted', createdAt: '2026-07-09T19:10:26', finishedAt: '2026-07-09T21:05:26',whoCreate: 'Дима', whoFinish: 'Саша' },
-      { id: 105, customer: 'Дмитрий 2', items:  [
-        { id: 1, name: 'Стейк Рибай', quantity: 1, price: 1200 },
-        { id: 2, name: 'Салат Цезарь', quantity: 2, price: 450 },
-        { id: 3, name: 'Вино сухое', quantity: 1, price: 2100 },
-      ], price: 1500, status: 'deleted', createdAt: '2026-07-09T19:00:26', finishedAt: '2026-07-09T21:05:26',whoCreate: 'Дима', whoFinish: 'Дима' },
-      { id: 106, customer: 'Дмитрий 3', items:  [
-        { id: 1, name: 'Стейк Рибай', quantity: 1, price: 1200 },
-        { id: 2, name: 'Салат Цезарь', quantity: 2, price: 450 },
-        { id: 3, name: 'Вино сухое', quantity: 1, price: 2100 },
-      ], price: 1500, status: 'completed', createdAt: '2026-07-09T19:00:26', finishedAt: '2026-07-09T21:05:26',whoCreate: 'Дима', whoFinish: 'Захар' },
-    ]
+
+  return new Promise((resolve, reject) => {
+    API.QUERY({
+      method: 'get',
+      url: `/api/orders/list`,
+    })
+      .then((response) => resolve(response))
+      .catch((error) => reject(error))
+  })
+}
+
+async function fetchMenuListAPI() {
+  console.log('API: fetchMenuListAPI')
+
+  return new Promise((resolve, reject) => {
+    API.QUERY({
+      method: 'get',
+      url: `/api/menu/list`,
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error))
   })
 }
 
@@ -74,7 +66,16 @@ async function onFinishOrderAPI(orderId) {
 
 async function addNewOrderToQueueAPI(order) {
   console.log('API: addNewOrderToQueueAPI, order ->', order)
-  return 'MOCK_ID'
+
+  return new Promise((resolve, reject) => {
+    API.QUERY({
+      method: 'post',
+      url: `/api/orders/create`,
+      data: order,
+    })
+      .then((response) => resolve(response))
+      .catch((error) => reject(error))
+  })
 }
 
 // Warehouse
@@ -136,4 +137,5 @@ export {
   fetchWarehouseListAPI,
   fetchOrdersListAPI,
   fetchOrderByIdAPI,
+  fetchMenuListAPI,
 }

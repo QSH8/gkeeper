@@ -111,6 +111,7 @@
 
 <script>
 
+import { mapState, mapActions } from 'vuex';
 import MenuListItem from './MenuListItem.vue';
 // import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 
@@ -148,6 +149,10 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      menuItems: (state) => state.menuItems,
+    }),
+
     activeTab() {
       return this.tabs.find(tab => tab.value === this.activeCategory) ?? {}
     },
@@ -166,7 +171,7 @@ export default {
 
     // Двойная фильтрация: сначала по табу, затем по поисковой строке
     filteredItems() {
-      let result = this.items;
+      let result = this.menuItems;
 
       // 1. Фильтрация по табу (если выбран не 'all')
       if (this.activeCategory !== 'all') {
@@ -189,10 +194,18 @@ export default {
       return result;
     }
   },
-  mounted() {
-    this.fetchItems();
-  },
+
   methods: {
+    ...mapActions({
+      fetchMenuList: 'fetchMenuList',
+    }),
+
+    async fetchItems() {
+      this.isLoading = true;
+      await this.fetchMenuList()
+      this.isLoading = false;
+    },
+
     goBackToOrder() {
       console.log('goBackToOrder');
       this.$store.dispatch('clearPreOrderItems')
@@ -205,153 +218,7 @@ export default {
       this.goBackToOrder()
     },
 
-    async fetchItems() {
-      this.isLoading = true;
-      this.error = null;
-      try {
-        await new Promise(resolve => setTimeout(resolve, 600));
-        
-        // В мок-данные добавлено поле category, под которое подстраивается фильтр
-        this.items = [
-          {
-            id: 1,
-            title: 'Голубая лагуна',
-            price: 450,
-            category: 'cocktails',
-            ingredients: [
-              { id: 1, name: 'Вода Газ', amount: '200' },
-              { id: 2, name: 'Брю кюрасао', amount: '50' },
-              { id: 10, name: 'Лёд', amount: '100' },
-              { id: 11, name: 'Стакан пластик 400', amount: '1' },
-              { id: 12, name: 'Трубочка', amount: '1' },
-              { id: 13, name: 'Ананас', amount: '1' },
-              { id: 14, name: 'Водка', amount: '45' },
-            ]
-          },
-          {
-            id: 2,
-            title: 'Бургер Классический',
-            price: 380,
-            category: 'kitchen',
-            ingredients: [{ id: 3, name: 'Котлета', amount: '120г' }, { id: 4, name: 'Чеддер', amount: '1 шт' }]
-          },
-          {
-            id: 3,
-            title: 'Салат Цезарь',
-            price: 320,
-            category: 'kitchen',
-            ingredients: [{ id: 5, name: 'Курица', amount: '100г' }, { id: 6, name: 'Пармезан', amount: '20г' }]
-          },
-          {
-            id: 4,
-            title: 'Картофель Фри',
-            price: 150,
-            category: 'kitchen',
-            ingredients: [{ id: 7, name: 'Картофель', amount: '150г' }]
-          },
 
-
-          
-          {
-            id: 20,
-            title: 'Водка',
-            price: 150,
-            category: 'stacks',
-            subCategory: 'on-choice',
-            ingredients: [{ id: 14, name: 'Водка', amount: '50' }]
-          },
-          {
-            id: 21,
-            title: 'Ром',
-            price: 150,
-            category: 'stacks',
-            subCategory: 'on-choice',
-            ingredients: [{ id: 25, name: 'Ром', amount: '50' }]
-          },
-          {
-            id: 22,
-            title: 'Джин',
-            price: 150,
-            category: 'stacks',
-            subCategory: 'on-choice',
-            ingredients: [{ id: 26, name: 'Джин', amount: '50' }]
-          },
-
-          
-          {
-            id: 30,
-            title: 'Шот с водкой',
-            price: 250,
-            category: 'stacks',
-            subCategory: 'shots',
-            ingredients: [{ id: 14, name: 'Водка', amount: '50' }, { id: 40, name: 'Выбор сиропа' }]
-          },
-          {
-            id: 31,
-            title: 'Шот с водкой',
-            price: 150,
-            category: 'stacks',
-            subCategory: 'shots',
-            ingredients: [{ id: 14, name: 'Водка', amount: '50' }, { id: 40, name: 'Выбор сиропа' }]
-          },
-          {
-            id: 32,
-            title: 'Шот с водкой',
-            price: 150,
-            category: 'stacks',
-            subCategory: 'shots',
-            ingredients: [{ id: 14, name: 'Водка', amount: '50' }, { id: 40, name: 'Выбор сиропа' }]
-          },
-
-
-          {
-            id: 33,
-            title: 'Облепиха',
-            price: 250,
-            category: 'stacks',
-            subCategory: 'tinctures',
-            ingredients: [{ id: 33, name: 'Облепиха', amount: '50' }]
-          },
-          {
-            id: 34,
-            title: 'Малина',
-            price: 250,
-            category: 'stacks',
-            subCategory: 'tinctures',
-            ingredients: [{ id: 34, name: 'Малина', amount: '50' }]
-          },
-          {
-            id: 35,
-            title: 'Перцовка',
-            price: 250,
-            category: 'stacks',
-            subCategory: 'tinctures',
-            ingredients: [{ id: 35, name: 'Перцовка', amount: '50' }]
-          },
-
-
-          {
-            id: 5,
-            title: 'Лимонад',
-            price: 250,
-            category: 'non-alc',
-            ingredients: [
-              { id: 11, name: 'Стакан пластик 400', amount: '1' },
-              { id: 12, name: 'Трубочка', amount: '1' },
-              { id: 9, name: 'Мята', amount: '5г' },
-              { id: 9, name: 'Мята', amount: '5г' },
-              { id: 9, name: 'Мята', amount: '5г' },
-              { id: 9, name: 'Мята', amount: '5г' },
-            ]
-          }
-        ];
-      } catch (err) {
-        this.error = 'Ошибка загрузки';
-        console.error(err);
-      } finally {
-        this.isLoading = false;
-      }
-    },
     // Клик по табу сообщает родителю о смене пропса через паттерн v-model
     handleTabClick(categoryValue) {
       this.activeCategory = categoryValue;
@@ -367,7 +234,11 @@ export default {
     handleItemClick(item) {
       this.$emit('select-item', item);
     }
-  }
+  },
+
+  async mounted() {
+    await this.fetchItems();
+  },
 };
 </script>
 

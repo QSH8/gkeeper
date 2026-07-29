@@ -16,8 +16,8 @@
 
     <div class="order-body__info">
       <div class="order-body__info-wrapper">
-        <p class="order-body__info-item">Принят: <span>{{ formatDate(order.createdAt)  }}, {{ order.whoCreate }}</span></p>
-        <p class="order-body__info-item">Завершён: <span>{{ formatDate(order.finishedAt)  }}, {{ order.whoFinish }}</span></p>
+        <p class="order-body__info-item">Принят: <span>{{ formatDate(order.createdAt)  }}, {{ order.createdBy }}</span></p>
+        <!-- <p class="order-body__info-item">Завершён: <span>{{ formatDate(order.finishedAt)  }}, {{ order.whoFinish }}</span></p> -->
       </div>
     </div>
 

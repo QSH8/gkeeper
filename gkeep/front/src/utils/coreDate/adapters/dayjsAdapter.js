@@ -20,7 +20,6 @@ dayjs.extend(timezone)
 dayjs.extend(quarterOfYear)
 dayjs.extend(dayOfYear)
 
-dayjs.tz.setDefault(dayjs.tz.guess())
 dayjs.locale('ru')
 
 export default class DayjsAdapter {

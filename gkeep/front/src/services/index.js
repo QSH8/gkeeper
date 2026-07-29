@@ -28,13 +28,12 @@ function formatDate(value) {
   return CoreDate.toStringByFormat(value, 'HH:mm dd, D MMM')
 }
 
-function formatNewOrderRequest({ orderInfo, orderItems }) {
+function formatNewOrderRequest(orderInfo, orderItems) {
   return {
-    info: {
-      clientName: orderInfo?.clientName ?? '',
-      comments: orderInfo?.comments ?? '',
-      isPriority: !!orderInfo?.isPriority,
-    },
+    customerName: orderInfo?.clientName ?? '',
+    comments: orderInfo?.comments ?? '',
+    paymentMethod: orderInfo?.paymentMethod ?? '',
+    isPriority: !!orderInfo?.isPriority,
     items: orderItems,
   }
 }

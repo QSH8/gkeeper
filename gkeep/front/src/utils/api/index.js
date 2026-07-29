@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { toast } from 'vue3-toastify'
 
 export default {
   QUERY(options, defaultError = true, customHeaders = {}, signal = null) {
@@ -100,10 +101,7 @@ export default {
             error.response?.status !== 503 &&
             error.response?.status < 540
           ) {
-            notify({
-              message: 'Ошибка сервера, обратись к админу)',
-              status: 'error',
-            })
+            toast(`Ошибка сервера, обратись к админу`, { autoClose: 2000, type: 'error', position: 'top-center' })
             reject(error)
           }
           resolve(error.response)

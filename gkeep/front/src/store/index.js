@@ -6,7 +6,8 @@ import {
   createWarehouseItemAPI,
   editWarehouseItemAPI,
   fetchWarehouseListAPI,
-  fetchOrdersListAPI
+  fetchOrdersListAPI,
+  fetchMenuListAPI,
 } from '../api/index.js'
 
 export default createStore({
@@ -20,6 +21,9 @@ export default createStore({
 
       // Warehouse
       warehouseItems: [],
+
+      // Menu
+      menuItems: [],
     };
   },
   
@@ -70,6 +74,10 @@ export default createStore({
       state.warehouseItems = items;
     },
 
+    SET_MENU_ITEMS(state, items) {
+      state.menuItems = items;
+    },
+
     // Опционально: локальное обновление одного элемента (для оптимизации, если нужно)
     UPDATE_WAREHOUSE_ITEM(state, updatedItem) {
       const index = state.warehouseItems.findIndex(item => item.id === updatedItem.id);
@@ -112,7 +120,7 @@ export default createStore({
     REMOVE_PREORDER_ITEM(state, index) {
       console.log('index ->', index);
       
-      state.orderItems.splice(index, 1)
+      state.preOrderItems.splice(index, 1)
     },
 
     ADD_TO_ORDER(state) {
@@ -135,6 +143,8 @@ export default createStore({
       try {
         const response = await fetchOrdersListAPI()
 
+        console.log('fetchOrdersList, response ->', response)
+
         if (response.data) {
           commit('SET_ORDERS_LIST', response.data)
         }
@@ -149,10 +159,22 @@ export default createStore({
       try {
         const response = await fetchWarehouseListAPI();
         // Передаем полученные данные в мутацию
-        commit('SET_WAREHOUSE_ITEMS', response.data);
+        commit('SET_WAREHOUSE_ITEMS', response);
       } catch (error) {
         console.error('Ошибка при загрузке склада:', error);
         throw error; // Пробрасываем ошибку, чтобы компонент её отловил
+      }
+    },
+
+    async fetchMenuList({ commit }) {
+      try {
+        const response = await fetchMenuListAPI();
+        console.log('response ->', response);
+        
+        commit('SET_MENU_ITEMS', response);
+      } catch (error) {
+        console.error('Ошибка при загрузке Меню:', error);
+        throw error; 
       }
     },
 
@@ -193,7 +215,7 @@ export default createStore({
     async addNewOrderToQueue({ state }) {
       console.log('addNewOrderToQueue')
       
-      const newOrderId = await addNewOrderToQueueAPI(formatNewOrderRequest({ orderInfo: state.orderInfo, orderItems: state.orderItems }))
+      const newOrderId = await addNewOrderToQueueAPI(formatNewOrderRequest(state.orderInfo, state.orderItems))
       
       toast(`Новый заказ #${newOrderId} добавлен в очередь`, { autoClose: 1000, type: 'success', position: 'top-center' })
     },

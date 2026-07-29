@@ -43,8 +43,8 @@ export default {
     })
   },
 
-  mounted() {
-    this.fetchOrdersList()
+  async mounted() {
+    await this.fetchOrdersList()
   },
 };
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="menu-item-card">
     <header class="menu-item-header">
-      <h3 class="menu-item-title">{{ itemData.title }}</h3>
+      <h3 class="menu-item-title">{{ itemData.name }}</h3>
     </header>
 
     <!-- Тело карточки: Ингредиенты -->
@@ -12,7 +12,7 @@
           :key="index" 
           class="ingredient-tag"
         >
-          {{ ing.name }} <span class="ingredient-amount">({{ ing.amount }})</span>
+          {{ ing.name }} <span class="ingredient-quantity">({{ ing.quantity }})</span>
         </li>
       </ul>
       <p v-else class="no-ingredients">Состав не указан</p>
@@ -100,6 +100,8 @@ export default {
     },
     // Минус один из заказа
     decrementCount() {
+      console.log(' this.quantity', this.quantity);
+      
       if (this.quantity === 1) {
         this.$store.dispatch('removePreOrderItem', this.itemData.id);
       } else {
@@ -169,7 +171,7 @@ export default {
   line-height: 1.3;
 }
 
-.ingredient-amount {
+.ingredient-quantity {
   color: #8e8e93;
   font-size: 11px;
 }
