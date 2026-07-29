@@ -6,9 +6,28 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 
 // https://vite.dev/config/
 export default defineConfig({
-   server: {
+  server: {
     port: 3000,
-    strictPort: true
+    strictPort: true,
+    proxy: {
+      // ['^' + process.env.VUE_APP_API_URL]: {
+      //   target: process.env.API_HOST + ':' + process.env.API_PORT + '/',
+      //   ws: true,
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     ['^' + process.env.VUE_APP_API_URL]: process.env.VUE_APP_API_URL,
+      //   },
+      // },
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        configure: (proxy, options) => {
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            console.log('Проксируем запрос к:', req.url);
+          });
+        }
+      }
+    }
   },
   plugins: [vue(), vueJsx()],
   resolve: {
