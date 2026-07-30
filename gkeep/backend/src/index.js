@@ -2,8 +2,10 @@ import express from 'express';
 import menuRouter from './routes/menu.routes.js';
 import warehouseRouter from './routes/warehouse.routes.js';
 import orderRouter from './routes/orders.routes.js';
+import usersRouter from './routes/users.routes.js';
 import { catchAsync } from './utils/catchAsync.js';
 import { errorMiddleware } from './middlewares/error.middleware.js';
+import { checkAuth } from './middlewares/checkAuth.middleware.js';
 import { initDatabase } from './config/db.js';
 
 const PORT = process.env.PORT || 5000;
@@ -11,6 +13,11 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 app.use(express.json());
+
+
+// LOGIN
+app.use('/api/login', usersRouter);
+app.use(checkAuth);
 
 // Подключение роутеров сущностей
 app.use('/api/menu', menuRouter);

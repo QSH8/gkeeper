@@ -1,10 +1,13 @@
 -- DROP TABLE IF EXISTS menu_ingredients CASCADE;
 -- DROP TABLE IF EXISTS menu CASCADE;
+-- DROP TABLE IF EXISTS users CASCADE;
 
 -- 1. Таблица сотрудников (для логирования created_by / finished_by)
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
+    login VARCHAR(100) NOT NULL,
+    password_hash VARCHAR(100) NOT NULL,
     role VARCHAR(50) DEFAULT 'employee'
 );
 

@@ -18,6 +18,32 @@ class OrdersRepository extends BaseRepository {
     return rows;
   }
 
+  async getAllSortByCreatedAtAndStatus() {
+    const { rows } = await this.pool.query(
+      `SELECT 
+          ${this.tableName}.*, 
+          users.name AS created_by
+      FROM 
+          orders
+      LEFT JOIN 
+          users ON orders.created_by = users.id;`
+    );
+    return rows;
+  }
+
+  async getQueue() {
+    const { rows } = await this.pool.query(
+      `SELECT 
+          ${this.tableName}.*, 
+          users.name AS created_by
+      FROM 
+          orders
+      LEFT JOIN 
+          users ON orders.created_by = users.id;`
+    );
+    return rows;
+  }
+
   async getAll() {
     const { rows } = await this.pool.query(
       `SELECT 
