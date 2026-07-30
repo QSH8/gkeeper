@@ -36,6 +36,24 @@
   --section-gap: 160px;
 }
 
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+textarea {
+  /* Отключает авто-подстановку цветов темной темы от Safari */
+  color-scheme: light; 
+  
+  /* Явно задаем цвет фона и текста */
+  background-color: #ffffff; 
+  color: #000000;
+  
+  /* Убираем дефолтную iOS-тень внутри инпута */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 /* Анимация появления */
 .fade-enter-active,
 .fade-leave-active {
