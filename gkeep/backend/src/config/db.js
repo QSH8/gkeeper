@@ -4,7 +4,9 @@ import path from 'path';
 import dotenv from 'dotenv';
 
 dotenv.config();
-
+// Заставляем драйвер возвращать типы TIMESTAMP (1114) и TIMESTAMPTZ (1184) как обычные строки
+pg.types.setTypeParser(1114, stringValue => stringValue);
+pg.types.setTypeParser(1184, stringValue => stringValue);
 
 const pool = new pg.Pool({
   user: process.env.DB_USER,
