@@ -313,7 +313,6 @@ export default {
 }
 
 .order-container {
-  max-width: 800px;
   margin: 2rem auto;
   padding: 20px;
   font-family: 'Inter', sans-serif;

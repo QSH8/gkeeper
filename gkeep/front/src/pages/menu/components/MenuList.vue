@@ -397,10 +397,9 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  bottom: 40px;
+  bottom: 50px;
   left: 0;
   width: 100%;
-  padding: 12px 16px;
   /* Безопасные отступы для безрамочных экранов (iPhone с Notch / Dynamic Island) */
   padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   background: linear-gradient(to top, rgba(255, 255, 255, 1) 80%, rgba(255, 255, 255, 0) 100%);
@@ -503,7 +502,6 @@ export default {
 
 @media (min-width: 768px) {
   .menu-list-grid, .search-box, .tabs-container {
-    max-width: 1024px;
     margin-left: auto;
     margin-right: auto;
   }

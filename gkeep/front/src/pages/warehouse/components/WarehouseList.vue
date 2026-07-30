@@ -315,7 +315,6 @@ export default {
   padding: 16px;
   padding-bottom: 90px;
   font-family: sans-serif;
-  max-width: 600px;
   margin: 0 auto;
 }
 
@@ -383,10 +382,9 @@ export default {
 
 .fab-container {
   position: fixed;
-  bottom: 0;
+  bottom: 50px;
   left: 0;
   right: 0;
-  padding: 16px;
   background: linear-gradient(to top, rgba(255,255,255,1) 80%, rgba(255,255,255,0));
   z-index: 10;
 }
@@ -441,7 +439,6 @@ export default {
   border-top-right-radius: 16px;
   padding: 20px;
   box-sizing: border-box;
-  max-width: 500px;
 }
 
 @media (min-width: 480px) {

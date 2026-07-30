@@ -58,7 +58,6 @@ html, body {
 .app-main {
   flex: 1;
   width: 100%;
-  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));

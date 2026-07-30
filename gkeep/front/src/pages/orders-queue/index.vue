@@ -44,10 +44,9 @@ export default {
 <style lang="css" scoped>
 .order-button-wrapper {
   position: fixed;
-  bottom: 40px;
+  bottom: 50px;
   left: 0;
   width: 100%;
-  padding: 12px 16px;
   /* Безопасные отступы для безрамочных экранов (iPhone с Notch / Dynamic Island) */
   padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   background: linear-gradient(to top, rgba(255, 255, 255, 1) 80%, rgba(255, 255, 255, 0) 100%);
@@ -112,9 +111,7 @@ export default {
   .order-button-wrapper {
     left: 50%;
     transform: translateX(-50%);
-    max-width: 480px;
     background: transparent;
-    padding-bottom: 24px;
   }
 }
 </style>
