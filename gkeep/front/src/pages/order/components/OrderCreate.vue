@@ -36,6 +36,26 @@
     </div>
 
     <div class="form-group">
+      <div class="select-wrapper">
+        <label for="payment-method" class="form-label">Единица измерения</label>
+        <select
+          id="payment-method"
+          :value="form.paymentMethod"
+          @change="form.paymentMethod = $event.target.value"
+          class="custom-select"
+        >
+          <option 
+            v-for="method in paymentMethods" 
+            :key="method.key" 
+            :value="method.value"
+          >
+            {{ method.value }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
       <label class="form-label">Позиции в заказе</label>
       
       <div v-if="orderItems.length > 0" class="added-items-list">
@@ -114,8 +134,13 @@ export default {
       form: {
         clientName: '',
         comment: '',
+        paymentMethod: '',
         isPriority: false,
       },
+      paymentMethods: [
+        { key: 'transfer', value: 'Перевод' },
+        { key: 'cash', value: 'Наличные'},
+      ],
       showConfirmAddToQueue: false,
     };
   },
@@ -333,6 +358,55 @@ export default {
 /* Показываем галочку при активации */
 .form-checkbox-real:checked + .form-checkbox-custom::after {
   transform: rotate(45deg) scale(1);
+}
+
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.custom-select {
+  width: 100%;
+  background-color: #f2f2f7;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 12px 14px;
+  /* Дополнительный правый паддинг, чтобы текст не наезжал на стрелочку */
+  padding-right: 40px; 
+  font-size: 15px;
+  color: #1c1c1e;
+  outline: none;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color 0.2s, background-color 0.2s;
+  
+  /* Сброс стандартного внешнего вида браузера */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+/* Эффекты при фокусе и ховере */
+.custom-select:focus {
+  background-color: #ffffff;
+  border-color: #007ff5; /* Аккуратный синий фокус, можно заменить на ваш */
+}
+
+/* Кастомная стрелочка drop-down (аккуратный мобильный SVG-треугольник) */
+.select-wrapper::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  /* SVG иконка стрелочки вниз цвета #1c1c1e */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://w3.org' viewBox='0 0 24 24' fill='none' stroke='%231c1c1e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none; /* Клик проходит сквозь стрелку в селект */
 }
 
 

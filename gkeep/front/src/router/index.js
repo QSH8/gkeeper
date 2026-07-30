@@ -14,6 +14,7 @@ const router = createRouter({
           name: 'OrdersQueue',
           meta: {
             translation: 'Очередь заказов',
+            requiresAuth: true,
           },
           component: () => import('../pages/orders-queue/index.vue'),
           beforeEnter: async () => {
@@ -25,6 +26,7 @@ const router = createRouter({
           name: 'TheOrder',
           meta: {
             translation: 'Заказ',
+            requiresAuth: true,
           },
           component: () => import('../pages/order/index.vue'),
           beforeEnter: async () => {
@@ -36,6 +38,7 @@ const router = createRouter({
           name: 'OrderCreate',
           meta: {
             translation: 'Создание заказа',
+            requiresAuth: true,
           },
           component: () => import('../pages/order/components/OrderCreate.vue'),
           beforeEnter: async () => {
@@ -47,6 +50,7 @@ const router = createRouter({
           name: 'OrdersHistory',
           meta: {
             translation: 'История заказов',
+            requiresAuth: true,
           },
           component: () => import('../pages/orders-history/index.vue'),
           beforeEnter: async () => {
@@ -58,6 +62,7 @@ const router = createRouter({
           name: 'Menu',
           meta: {
             translation: 'Меню',
+            requiresAuth: true,
           },
           component: () => import('../pages/menu/index.vue'),
         },
@@ -66,6 +71,7 @@ const router = createRouter({
           name: 'Warehouse',
           meta: {
             translation: 'Склад',
+            requiresAuth: true,
           },
           component: () => import('../pages/warehouse/index.vue'),
           beforeEnter: async () => {
@@ -73,12 +79,12 @@ const router = createRouter({
           } 
         },
         {
-          path: '/profile',
-          name: 'Profile',
+          path: '/login',
+          name: 'Login',
           meta: {
-            translation: 'Профиль',
+            translation: 'Авторизация',
           },
-          component: () => import('../pages/profile/index.vue'),
+          component: () => import('../pages/login/index.vue'),
           beforeEnter: async () => {
             await store.dispatch('setInactiveCreate')
           } 
@@ -87,5 +93,19 @@ const router = createRouter({
     },
   ],
 })
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+
+  if (to.meta.requiresAuth && !token) {
+    // Если страница требует авторизации, а токена нет — отправляем на /login
+    next('/login');
+  } else if (to.path === '/login' && token) {
+    // Если пользователь уже авторизован, но пытается зайти на /login — пускаем на главную
+    next('/');
+  } else {
+    next();
+  }
+});
 
 export default router
