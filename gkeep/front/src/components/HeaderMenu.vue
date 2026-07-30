@@ -15,6 +15,9 @@
         <li>
           <router-link to="/warehouse" @click="$emit('close')">Склад</router-link>
         </li>
+        <li>
+          <router-link to="/login" @click="toExit">Выйти</router-link>
+        </li>
       </ul>
     </nav>
   </transition>
@@ -29,7 +32,16 @@ export default {
       required: true
     }
   },
-  emits: ['close']
+  emits: ['close'],
+  
+  methods: {
+    toExit(){
+      localStorage.removeItem('token');
+      window.dispatchEvent(new Event('local-storage-updated'))
+
+      this.$emit('close')
+    }
+  }
 };
 </script>
 

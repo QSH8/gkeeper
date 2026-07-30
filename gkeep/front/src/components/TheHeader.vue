@@ -2,14 +2,14 @@
   <header class="app-header">
     <div class="header-container">
       <div v-click-outside="closeMenu" class="header-left">
-        <button class="icon-btn burger-btn" @click="toggleMenu" aria-label="Открыть меню">
+        <button v-if="isAuth" class="icon-btn burger-btn" @click="toggleMenu" aria-label="Открыть меню">
           <div class="burger-icon" :class="{ 'is-active': isMenuOpen }">
             <span></span>
             <span></span>
             <span></span>
           </div>
         </button>
-        <HeaderMenu :is-open="isMenuOpen" @close="closeMenu" />
+        <HeaderMenu v-if="isAuth" :is-open="isMenuOpen" @close="closeMenu" />
       </div>
       <div class="header-center">
         <router-link to="/" class="logo">Gkeep</router-link>
@@ -29,11 +29,11 @@ export default {
     HeaderMenu,
     TheBreadcrumbs,
   },
-
   data() {
     return {
-      isMenuOpen: false
-    };
+      isMenuOpen: false,
+      isAuth: false,
+    }
   },
 
   methods: {
@@ -43,7 +43,19 @@ export default {
 
     closeMenu() {
       this.isMenuOpen = false
+    },
+
+    checkToken() {
+      this.isAuth = !!localStorage.getItem('token')
     }
+  },
+
+  mounted() {
+    window.addEventListener('local-storage-updated', this.checkToken)
+  },
+
+  unmounted() {
+    window.removeEventListener('local-storage-updated', this.checkToken)
   }
 };
 </script>

@@ -7,7 +7,7 @@
         <label for="login" class="form-label">Логин</label>
         <input
           id="login"
-          v-model="login"
+          v-model.trim="login"
           type="text"
           class="form-input"
           required
@@ -17,8 +17,8 @@
         <label for="client-name" class="form-label">Пароль</label>
         <input
           id="password"
-          v-model="password"
-          type="text"
+          v-model.trim="password"
+          type="password"
           class="form-input"
           required
         />
@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import { loginAPI } from '@/api/index.js'
+
 export default {
   name: 'Login',
   data() {
@@ -45,20 +47,18 @@ export default {
     async handleLogin() {
       try {
         this.errorMessage = '';
-        const response = await loginAPI({ login: login.value, password: password.value })
+        const { data } = await loginAPI({ login: login.value, password: password.value })
        
-    
-        if (!response) {
-          throw new Error(data.error || 'Ошибка авторизации');
+        if (data.error) {
+          this.errorMessage = data?.error || 'Ошибка авторизации';
+          return
+        } else if (data.token) {
+          localStorage.setItem('token', data.token);
+          window.dispatchEvent(new Event('local-storage-updated'))
         }
         
-        localStorage.setItem('token', response.token);
-        
         this.$router.push('/');
-      } catch (err) {
-        this.errorMessage = err.message;
-      }
-      
+      } catch (e) {}
     }
   }
 }

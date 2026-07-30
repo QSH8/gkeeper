@@ -1,5 +1,20 @@
 import API from '@/utils/api/index.js'
 
+
+async function loginAPI({ login, password }) {
+  console.log('API: fetchOrdersListAPI')
+
+  return new Promise((resolve, reject) => {
+    API.QUERY({
+      method: 'post',
+      url: `/api/login`,
+      data: { login, password },
+    })
+      .then((response) => resolve(response))
+      .catch((error) => console.log(error))
+  })
+}
+
 async function fetchOrderByIdAPI(orderId) {
   // '/order' by id
   console.log('API: fetchOrderByIdAPI, orderId ->', orderId)
@@ -130,6 +145,7 @@ async function editWarehouseItemAPI(warehouseItem) {
 }
 
 export {
+  loginAPI,
   onFinishOrderAPI,
   addNewOrderToQueueAPI,
   createWarehouseItemAPI,
