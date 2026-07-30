@@ -61,7 +61,7 @@ html, body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
 }
 
 @media (max-width: 768px) {
@@ -72,7 +72,7 @@ html, body {
   
   .app-main {
     padding: 15px;
-    padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
   }
 }
 </style>

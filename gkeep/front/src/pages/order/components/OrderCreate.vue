@@ -175,7 +175,7 @@ export default {
 <style scoped>
 .order-button-wrapper {
   position: fixed;
-  bottom: 0;
+  bottom: 40px;
   left: 0;
   width: 100%;
   padding: 12px 16px;

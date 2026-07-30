@@ -397,7 +397,7 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  bottom: 0;
+  bottom: 40px;
   left: 0;
   width: 100%;
   padding: 12px 16px;
