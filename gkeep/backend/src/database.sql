@@ -1,4 +1,5 @@
 -- DROP TABLE IF EXISTS menu_ingredients CASCADE;
+-- DROP TABLE IF EXISTS menu CASCADE;
 
 -- 1. Таблица сотрудников (для логирования created_by / finished_by)
 CREATE TABLE IF NOT EXISTS users (
@@ -11,6 +12,8 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS menu (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    sub_category VARCHAR(100),
     price INT NOT NULL,
     is_available BOOLEAN DEFAULT true
 );
