@@ -1,12 +1,10 @@
 <template>
-  <div id="app" class="app-container">
+  <div id="app" class="app-wrapper">
     <TheHeader />
 
-    <div class="main-layout">
-      <main class="content">
-        <router-view />
-      </main>
-    </div>
+    <main class="app-content">
+      <router-view />
+    </main>
 
     <TheFooter />
   </div>
@@ -34,26 +32,25 @@ export default {
   padding: 0;
 }
 
-.app-container {
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* Запрещает баунс-эффект и скролл всего экрана в iOS */
+  background-color: #ffffff; /* Задайте цвет фона, чтобы не было видно белых полос */
+}
+
+.app-wrapper {
   display: flex;
   flex-direction: column;
-  height: 100dvh;
-}
-
-.main-layout {
-  display: flex;
-  margin-top: 60px;
-  flex: 1;
-}
-
-.content {
-  flex: 1;
+  /* dvh идеально работает в iOS 15.4+ и решает проблему прыгающей высоты */
+  height: 100dvh; 
   width: 100%;
 }
 
-@media (max-width: 768px) {
-  .main-layout {
-    flex-direction: column;
-  }
+.app-content {
+  margin-top: 60px;
+  flex-grow: 1;
 }
 </style>
