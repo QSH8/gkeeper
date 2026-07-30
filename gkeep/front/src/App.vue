@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="app-wrapper">
+  <div id="app" class="app-layout">
     <TheHeader />
 
     <main class="app-content">
@@ -28,29 +28,51 @@ export default {
 </script>
 
 <style scoped>
-#app {
-  padding: 0;
-}
-
-html, body {
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden; /* Запрещает баунс-эффект и скролл всего экрана в iOS */
-  background-color: #ffffff; /* Задайте цвет фона, чтобы не было видно белых полос */
 }
-
-.app-wrapper {
+html, body {
+  height: 100%;
+  width: 100%;
+  background-color: #f8f9fa;
+   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+#app {
+  height: 100%;
+}
+.app-layout {
   display: flex;
   flex-direction: column;
-  /* dvh идеально работает в iOS 15.4+ и решает проблему прыгающей высоты */
-  height: 100dvh; 
-  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh; 
 }
 
-.app-content {
-  margin-top: 60px;
-  flex-grow: 1;
+.logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.app-main {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    height: 50px;
+    padding: 0 15px;
+  }
+  
+  .app-main {
+    padding: 15px;
+    padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px));
+  }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <header class="the-header">
+  <header class="app-header">
     <div class="header-container">
       <div v-click-outside="closeMenu" class="header-left">
         <button class="icon-btn burger-btn" @click="toggleMenu" aria-label="Открыть меню">
@@ -58,19 +58,17 @@ export default {
 </script>
 
 <style scoped>
-.the-header {
-  position: fixed;
-  /* Всегда прикреплен сверху */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: fit-content;
+/* 3. ШАПКА (С адаптацией под iPhone сверху) */
+.app-header {
   background-color: #ffffff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  z-index: 1001;
-  box-shadow: 0 5px 10px -5px rgba(0, 0, 0, 0.3);
+  color: #333333;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 
-  /* Выше, чем HeaderMenu */
+  /* Решение для iPhone: добавляем безопасный отступ сверху под "челку" */
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 .header-container {
