@@ -187,7 +187,7 @@ export default {
       const query = this.searchQuery.trim().toLowerCase();
       if (query) {
         result = result.filter(item => 
-          item.title && item.title.toLowerCase().includes(query)
+          item.name && item.name.toLowerCase().includes(query)
         );
       }
 
