@@ -10,7 +10,7 @@ export class WarehouseResponseDTO {
     this.id = row.id;
     this.name = row.name;
     this.quantity = row.quantity;
-    this.unit = row.unit;
+    this.units = row.units;
   }
 }
 
@@ -18,7 +18,7 @@ export class WarehouseResponseDTO {
 // CreateWarehouse
 export class WarehouseCreateRequestDTO {
   constructor(body) {
-    this.ingredientName = body.ingredientName;
+    this.name = body.name;
     this.quantity = body.quantity !== undefined ? parseInt(body.quantity, 10) : 0; 
     this.units = body.units;
   }
@@ -27,7 +27,7 @@ export class WarehouseCreateRequestDTO {
 export class WarehouseCreateResponseDTO {
   constructor(row) {
     this.id = row.id;
-    this.ingredientName = row.ingredient_name;
+    this.name = row.name;
     this.quantity = row.quantity;
     this.units = row.units;
   }
@@ -36,8 +36,9 @@ export class WarehouseCreateResponseDTO {
 
 // UpdateWarehouse
 export class WarehouseUpdateRequestDTO {
-  constructor(body) {
-    this.ingredientName = body.ingredientName;
+  constructor(body, id) {
+    this.id = body.id;
+    this.name = body.name;
     this.quantity = body.quantity !== undefined ? parseInt(body.quantity, 10) : 0; 
     this.units = body.units;
   }
@@ -46,7 +47,7 @@ export class WarehouseUpdateRequestDTO {
 export class WarehouseUpdateResponseDTO {
   constructor(row) {
     this.id = row.id;
-    this.ingredientName = row.ingredient_name;
+    this.name = row.name;
     this.quantity = row.quantity;
     this.units = row.units;
   }
