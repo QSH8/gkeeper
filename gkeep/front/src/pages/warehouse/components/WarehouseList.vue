@@ -64,9 +64,8 @@
             <input
               class="form-input"
               id="quantity"
-              v-model="formQuantity" 
-              type="number" 
-              step="any"
+              v-model.trim="formQuantity" 
+              type="text" 
             />
           </div>
 
