@@ -2,7 +2,7 @@
   <div class="order-card" :class="{'priority': order.info.priority}" @click="$router.push({ path: `/order/${order.info.id}` })">
     <div class="order-header">
       <div>
-        <span class="order-id">#{{ order.info.id }}</span> | <span class="order-status">{{ ORDER_STATUSES?.[order.status] || 'Завершён' }}</span>
+        <span class="order-id">#{{ order.info.id }}</span> | <span class="order-status">{{ ORDER_STATUSES?.[order.info.status] || 'Завершён' }}</span>
         <p v-if="order.info.priority" class="order-status_priority">{{ 'Приоритет' || '' }}</p>
       </div>
       <span class="customer-name">{{ order.customer }}</span>

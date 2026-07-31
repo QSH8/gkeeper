@@ -2,7 +2,7 @@
   <div class="order-card" :class="{'priority': order.info.isPriority}" @click="$router.push({ path: `/order/${order.info.id}` })">
     <div class="order-header">
       <div>
-        <span class="order-id">#{{ order.info.id }}</span> | <span class="order-status">{{ ORDER_STATUSES?.[order.status] || 'Завершён' }}</span>
+        <span class="order-id">#{{ order.info.id }}</span> | <span class="order-status" :class="{ 'success': order.info.status === 'in_progress' }">{{ ORDER_STATUSES?.[order.info.status] || 'Завершён' }}</span>
         <span v-if="order.info.isPriority" class="order-status_priority">{{ 'Приоритет' || '' }}</span>
       </div>
       <span class="customer-name">{{ order.info.customer }}</span>
@@ -118,6 +118,11 @@ export default {
 .order-status {
   font-weight: bold;
   color: #dc3545;
+  font-size: 0.7rem;
+}
+.order-status.success {
+  font-weight: bold;
+  color: #3b9be1;
   font-size: 0.7rem;
 }
 
