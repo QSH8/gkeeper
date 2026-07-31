@@ -7,20 +7,20 @@ export class OrderRequestDTO {
 
 export class OrderResponseDTO {
   constructor(row) {
-    this.id = row.id;
-    this.items = row.items || [];
-    this.price = row.price;
-    this.status = row.status;
-    this.comments = row.comments;
-    this.createdAt = row.created_at;
-    this.modifiedAt = row.modified_at;
-    this.finishedAt = row.finished_at;
-    this.customerName = row.customer_name;
-    this.paymentMethod = row.payment_method;
-    this.createdBy = row.created_by;
-    this.finishedBy = row.finished_by;
-    this.modifiedBy = row.modified_by;
-    this.isPriority = row.is_priority;
+    console.log('row', row);
+    
+    this.info = {
+      id: row.id,
+      price: row.price,
+      status: row.status,
+      comments: row.comments,
+      customerName: row.customer_name,
+      paymentMethod: row.payment_method,
+      isPriority: row.is_priority,
+      createdAt: row.created_at,
+      finishedAt: row.finished_at,
+    },
+    this.items = row.items
   }
 }
 
@@ -32,11 +32,9 @@ export class OrderCreateRequestDTO {
     this.payment_method = body.paymentMethod;
     this.is_priority = body.isPriority || false;
     this.items = body.items || []; 
-    this.created_by = userId;
-    this.modified_by = userId;
+    this.price = body.price
   }
 }
-
 export class OrderCreateResponseDTO {
   constructor(row) {
     this.id = row.id;

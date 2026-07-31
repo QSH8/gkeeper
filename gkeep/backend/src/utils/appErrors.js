@@ -20,7 +20,7 @@ export class NotFoundError extends AppError {
 // 400: Неверные данные от клиента (Bad Request)
 export class BadRequestError extends AppError {
   constructor(message = 'Некорректный запрос') {
-    super(message, 400);
+    super(message, 200);
   }
 }
 

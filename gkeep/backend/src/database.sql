@@ -1,6 +1,7 @@
 -- DROP TABLE IF EXISTS menu_ingredients CASCADE;
 -- DROP TABLE IF EXISTS menu CASCADE;
 -- DROP TABLE IF EXISTS users CASCADE;
+-- DROP TABLE IF EXISTS orders CASCADE;
 
 -- 1. Таблица сотрудников (для логирования created_by / finished_by)
 CREATE TABLE IF NOT EXISTS users (
@@ -44,6 +45,7 @@ CREATE TABLE IF NOT EXISTS orders (
     comments TEXT,
     payment_method VARCHAR(50) NOT NULL,
     is_priority BOOLEAN DEFAULT false,
+    items JSONB,
     status VARCHAR(50) DEFAULT 'in_progress',
     
     -- Системные поля логирования

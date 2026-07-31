@@ -52,13 +52,13 @@ class WarehouseRepository extends BaseRepository {
   async decreaseIngredientStock(ingredientId, amountToDecrease, dbClient = this.pool) {
     // FOR UPDATE блокирует строку на складе, чтобы два параллельных заказа не списали один и тот же остаток одновременно
     const checkQuery = `
-      SELECT quantity FROM warehouse WHERE id = $1 FOR UPDATE;
+      SELECT quantity, name FROM warehouse WHERE id = $1 FOR UPDATE;
     `;
     const { rows } = await dbClient.query(checkQuery, [ingredientId]);
     
     if (!rows[0] || rows[0].quantity < amountToDecrease) {
       // Бросаем ошибку, транзакция в Сервисе её поймает и сделает ROLLBACK
-      throw new Error(`Недостаточно ингредиента на складе (ID: ${ingredientId})`);
+      throw new Error(`Недостаточно ингредиента на складе (Наименование: ${rows[0].name})`);
     }
 
     const updateQuery = `

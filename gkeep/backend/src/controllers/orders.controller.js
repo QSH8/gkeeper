@@ -15,8 +15,27 @@ class OrderController {
   }
 
   getAll = catchAsync(async (req, res) => {
-    const rows = await this.repository.getAll();
-    res.json(rows.map(row => new OrderResponseDTO(row)));
+    const rows = await this.repository.getQueue();
+      res.json(rows.map(row => {
+        console.log('row', row);
+        
+        return new OrderResponseDTO(row)
+      }
+    ));
+  });
+
+  getOne = catchAsync(async (req, res) => {
+    console.log(req);
+    
+    const rows = await this.repository.getOrderById(req.body.id);
+    res.json(new OrderResponseDTO(rows[0]));
+  });
+
+  finish = catchAsync(async (req, res) => {
+    console.log(req);
+    
+    const rows = await this.repository.finishOrder(req.body.id);
+    res.json({ data: req.body.id, error: null });
   });
 
   create = catchAsync(async (req, res) => {
