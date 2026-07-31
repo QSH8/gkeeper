@@ -7,8 +7,6 @@ export class OrderRequestDTO {
 
 export class OrderResponseDTO {
   constructor(row) {
-    console.log('row', row);
-    
     this.info = {
       id: row.id,
       price: row.price,

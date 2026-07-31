@@ -24,6 +24,14 @@
             <p class="info-list__item-label">Клиент:</p>
             <p class="info-list__item-value">{{ orderDetail.customerName }}</p>
           </li>
+          <li class="info-list__item">
+            <p class="info-list__item-label">Способ оплаты:</p>
+            <p class="info-list__item-value">{{ orderDetail.paymentMethod }}</p>
+          </li>
+          <li class="info-list__item">
+            <p class="info-list__item-label">Заказ создан:</p>
+            <p class="info-list__item-value">{{ formatDate(orderDetail.createdAt) }}</p>
+          </li>
         </ul>
       </div>
       <!-- Тело заказа (Позиции) -->
@@ -43,7 +51,7 @@
 
         <div class="total-row">
           <span class="total-label">Итого к оплате:</span>
-          <span class="total-amount">{{ calculateTotal() }} ₽</span>
+          <span class="total-amount">{{ orderDetail.price }} ₽</span>
         </div>
       </div>
 
@@ -162,6 +170,9 @@ export default {
 </script>
 
 <style lang="css" scoped>
+.order-page {
+  padding: 10px;
+}
 .service-buttons {
   display: flex;
   flex-direction: row;

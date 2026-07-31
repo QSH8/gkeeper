@@ -33,16 +33,16 @@ function formatDate(value) {
 }
 
 function formatNewOrderRequest(orderInfo, orderItems) {
-  const price = getTotalPrice(orderItems)
+  // const price = getTotalPrice(orderItems)
 
-  console.log('price', price);
+  // console.log('price', price);
 
   return {
     customerName: orderInfo?.clientName ?? '',
     comments: orderInfo?.comments ?? '',
     paymentMethod: orderInfo?.paymentMethod ?? '',
     isPriority: !!orderInfo?.isPriority,
-    price,
+    price: isNaN(Number(orderInfo)) ? 0 : Number(orderInfo),
     items: orderItems,
   }
 }

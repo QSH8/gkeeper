@@ -219,13 +219,13 @@ export default createStore({
     // Warehouse end
     
 
-    async addNewOrderToQueue({ state, dispatch }) {
+    async addNewOrderToQueue({ state, dispatch }, { totalPrice }) {
       console.log('addNewOrderToQueue')
 
      
       
       
-      const { data } = await addNewOrderToQueueAPI(formatNewOrderRequest(state.orderInfo, state.orderItems))
+      const { data } = await addNewOrderToQueueAPI(formatNewOrderRequest({ ...state.orderInfo, price: totalPrice }, state.orderItems))
       console.log('data ->', data);
 
       if (data?.status === 'error') {

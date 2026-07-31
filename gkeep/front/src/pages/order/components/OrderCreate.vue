@@ -65,7 +65,10 @@
           class="added-item-row"
         >
           <div class="item-info">
-            <span class="item-title">{{ item.quantity }}x {{item.name }}</span> - <span class="item-price">{{ item.price }} ₽</span>
+            <span class="item-title">
+              {{ item.quantity }}x {{item.name }}
+            </span>
+            <span class="item-price">{{ item.quantity }} x {{ item.price }} ₽</span>
           </div>
           
           <button 
@@ -88,23 +91,48 @@
       </div>
       
 
-      <!-- <div class="form-group">
+      <div class="form-group">
         <label class="form-label">Сеты</label>
 
         <div v-if="orderItems.length > 0" class="added-items-list">
           <div 
-            v-for="(item, index) in sets" 
+            v-for="(item, key, index) in sets" 
             :key="item.id + '-' + index" 
             class="added-item-row"
           >
             <div class="item-info">
-              <span class="item-title">{{ item.quantity }}x {{item.name }}</span> - <span class="item-price">{{ item.price }} ₽</span>
+              <template v-if="item.sets.okto" >
+                <span class="item-title">
+                  {{ item.sets.okto }}
+                  x
+                  <span class="item-title_bold"> СЕТ ИЗ 8 </span>
+                  {{ item.name }}
+                </span>
+                <span class="item-price">{{ item.sets.okto + ' x ' + priceForSetBySubCategory[key]?.okto }} ₽</span>
+              </template>
+
+              <template v-else-if="item.sets.quadro" >
+                <span class="item-title">
+                  {{ item.sets.quadro }}
+                  x
+                  <span class="item-title_bold"> СЕТ ИЗ 4 </span>
+                  {{ item.name }}
+                </span>
+                <span class="item-price">{{ item.sets.quadro + ' x ' + priceForSetBySubCategory[key]?.quadro }} ₽</span>
+              </template>
+
+              <span v-if="item.singles" class="item-title">
+                {{ item.singles + 'x ' + item.name }}
+                <span class="item-title_bold"> ОТДЕЛЬНО </span><br />
+                <span class="item-price">{{ item.singles + ' x ' + priceForOneBySubCategory[key] }} ₽</span>
+              </span>
             </div>
           </div>
         </div>
-      </div> -->
+      </div>
 
-      <h1 class="total">{{ finalPrice }} ₽</h1>
+      <h1 v-if="totalPrice" class="total" :class="{ 'throw': checkDiscount }">{{ totalPrice }} ₽</h1>
+      <h1 v-if="checkDiscount" class="final-with-discount" >{{ finalPriceWithDiscount }} ₽</h1>
 
       <!-- Кнопка (+) для перехода на страницу меню -->
       <button 
@@ -162,9 +190,29 @@ export default {
       showConfirmAddToQueue: false,
 
       setsCategories: {
-        'on-choise': 'Алкоголя на выбор',
+        'choose': 'Алкоголя на выбор',
         'shots': 'Шотов',
         'tinctures': 'Настоек',
+      },
+
+      priceForSetBySubCategory: {
+        'choose': {
+          quadro: 700,
+          okto: 1300,
+        },
+        'shots': {
+          quadro: 900,
+          okto: 1700,
+        },
+        'tinctures': {
+          quadro: 900,
+          okto: 1700,
+        },
+      },
+      priceForOneBySubCategory: {
+        'choose': 200,
+        'shots': 250,
+        'tinctures': 250,
       }
     };
   },
@@ -174,31 +222,83 @@ export default {
       orderInfo: (state) => state.orderInfo,
     }),
 
-    // sets() {
-    //   const stacks = this.orderItems.filter(item => item.category === 'stacks')
-    //   const stacksSets = stacks.reduce((acc, cur) => {
-    //     if (cur.subCategory in acc) {
-    //       acc[cur.subCategory].sets
-    //     } else {
-    //       acc[cur.subCategory] = {
-    //         name: this.setsCategories[cur.subCategory],
-    //         sets: {
+    checkDiscount() {
+      const setValues = Object.values(this.sets)
+      return setValues.length ? setValues.find(item => !!item.sets.quadro || !!item.sets.okto ) : false
+    },
 
-    //         }
-    //       }
-    //     }
+    sets() {
+      const stacks = this.orderItems.filter(item => item.category === 'stacks')
+      const stacksSets = stacks.reduce((acc, cur) => {
+        console.log('this.setsCategories[cur.subCategory]',this.setsCategories[cur.subCategory]);
+        console.log('cur.subCategory', cur.subCategory);
+        console.log('this.setsCategories', this.setsCategories);
+        
+        if (cur.subCategory in acc) {
+          acc[cur.subCategory].name = this.setsCategories[cur.subCategory]
+          acc[cur.subCategory].total += cur.quantity
+          acc[cur.subCategory].sets.quadro = Math.floor(acc[cur.subCategory].total / 4)
+          acc[cur.subCategory].sets.okto = Math.floor(acc[cur.subCategory].total / 8)
+          acc[cur.subCategory].singles = Math.floor(acc[cur.subCategory].total % 4)
+        } else {
+          acc[cur.subCategory] = {
+            name: this.setsCategories[cur.subCategory],
+            total: cur.quantity,
+            sets: {
+              quadro: Math.floor(cur.quantity / 4),
+              okto: Math.floor(cur.quantity / 8),
+            },
+            singles: Math.floor(cur.quantity % 4),
+          }
+        }
 
-    //     return acc
-    //   }, {})
+        return acc
+      }, {})
 
+      console.log('stacksSets', stacksSets);
       
-    // },
+      return stacksSets
+    },
 
-    finalPrice() {
+    totalPrice() {
       return this.orderItems.reduce((acc, cur) => {
         acc = acc + (cur.price * cur.quantity)
         return acc
       }, 0)
+    },
+
+    getAllStaksInOrderPrice() {
+      return this.orderItems.reduce((acc, cur) => {
+        if (cur.category === 'stacks') {
+          acc += cur.price * cur.quantity
+        }
+
+        return acc
+      }, 0)
+    },
+
+    getWithSetsPrice() {
+      return Object.entries(this.sets).reduce((acc, [key, value]) => {
+        const quadro = value.sets.quadro * this.priceForSetBySubCategory[key]?.quadro
+        const okto = value.sets.okto * this.priceForSetBySubCategory[key]?.okto
+        const singles = value.singles * this.priceForOneBySubCategory[key]
+
+        acc += quadro + okto + singles
+        return acc
+      }, 0)
+    },
+
+    getDiscount() {
+      console.log('this.getAllStaksInOrderPrice ->', this.getAllStaksInOrderPrice);
+      console.log('this.getWithSetsPrice ->', this.getWithSetsPrice);
+      
+      return this.getAllStaksInOrderPrice - this.getWithSetsPrice
+    },
+ 
+    finalPriceWithDiscount() {
+      console.log('this.getDiscount', this.getDiscount);
+      
+      return this.totalPrice - this.getDiscount
     },
 
     hasClientName() {
@@ -216,7 +316,7 @@ export default {
 
     },
     addNewOrderToQueue() {
-      this.$store.dispatch('addNewOrderToQueue')
+      this.$store.dispatch('addNewOrderToQueue', { totalPrice: this.finalPriceWithDiscount })
 
       this.goToOrdersQueue()
     },
@@ -259,6 +359,17 @@ export default {
   box-sizing: border-box;
   z-index: 100;
 }
+
+.total.throw {
+  text-decoration: line-through;
+  font-size: 1.75rem;
+}
+
+.final-with-discount {
+  color: #007aff;
+  font-size: 2.5rem;
+}
+
 
 /* Сама зеленая кнопка во всю ширину */
 .add-to-queue-order-btn {
@@ -529,7 +640,7 @@ export default {
 /* Информация о блюде внутри строки */
 .item-info {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-self: centers;
   gap: 2px;
@@ -539,6 +650,10 @@ export default {
   font-size: 15px;
   font-weight: 400;
   color: #1c1c1e;
+}
+
+.item-title_bold {
+  font-weight: 700;
 }
 
 .item-price {

@@ -17,8 +17,6 @@ class OrderController {
   getAll = catchAsync(async (req, res) => {
     const rows = await this.repository.getQueue();
       res.json(rows.map(row => {
-        console.log('row', row);
-        
         return new OrderResponseDTO(row)
       }
     ));

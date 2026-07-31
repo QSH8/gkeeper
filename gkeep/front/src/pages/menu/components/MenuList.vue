@@ -137,7 +137,7 @@ export default {
         { id: 3, label: 'Безалкогольные', value: 'non-alc' },
         { id: 4, label: 'Стопки', value: 'stacks',
           subtabs: [
-            { id: 1, label: 'Алко на выбор', value: 'on-choice' },
+            { id: 1, label: 'Алко на выбор', value: 'choose' },
             { id: 2, label: 'Шоты', value: 'shots' },
             { id: 3, label: 'Настойки', value: 'tinctures' },
           ]
@@ -394,9 +394,11 @@ export default {
 
 .order-button-wrapper {
   display: flex;
+  position: sticky;
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
+  bottom: 10px;
   /* Безопасные отступы для безрамочных экранов (iPhone с Notch / Dynamic Island) */
   padding-bottom: env(safe-area-inset-bottom, 0px);
   background: linear-gradient(to top, rgba(255, 255, 255, 1) 80%, rgba(255, 255, 255, 0) 100%);
