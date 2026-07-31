@@ -237,7 +237,7 @@ export default createStore({
 
       await dispatch('fetchOrdersList')
       
-      toast(`Новый заказ #${id} добавлен в очередь`, { autoClose: 1000, type: 'success', position: 'top-center' })
+      toast(`Новый заказ #${data?.id ?? ''} добавлен в очередь`, { autoClose: 1000, type: 'success', position: 'top-center' })
     },
 
     clearPreOrderItems({ commit }) {

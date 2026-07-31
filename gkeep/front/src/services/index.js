@@ -9,7 +9,7 @@ function sortArrayByCreatedAtDate(items, order = 'DESC') {
 function sortWithPriorityAndDate(items) {
   console.log('items', items);
   
-  return items.filter(item => item.status === 'in_progress')
+  return items.filter(item => item.info.status === 'in_progress')
     .toSorted((a, b) => {
       const priorityDiff = (b?.info?.isPriority || false) - (a?.info?.isPriority || false)
       
