@@ -1,7 +1,7 @@
 import CoreDate from '@/utils/coreDate';
 
 function sortArrayByCreatedAtDate(items, order = 'DESC') {
-  const sortItems = items.filter(item => item.status !== 'in_progress')
+  const sortItems = items.filter(item => item?.info?.status !== 'in_progress')
   if (order === 'DESC') return sortItems.toSorted((a, b) => CoreDate.toDate(b?.info?.createdAt) - CoreDate.toDate(a?.info?.createdAt))
   else if (order === 'ASC') return sortItems.toSorted((a, b) => CoreDate.toDate(a?.info?.createdAt) - CoreDate.toDate(b?.info?.createdAt))
 }
