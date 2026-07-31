@@ -5,19 +5,15 @@ const ORDER_STATUSES = {
 }
 
 const UNIT_OPTIONS = [
-  { key: 'ml', value: 'мл.' },
-  { key: 'l', value: 'л.' },
-  { key: 'kg', value: 'кг.' },
-  { key: 'g', value: 'г.' },
-  { key: 'entity', value: 'шт.' },
+  { key: 'ml', value: 'мл' },
+  { key: 'g', value: 'г' },
+  { key: 'entity', value: 'шт' },
 ]
 
 const UNITS = {
-  'ml': 'мл.',
-  'l': 'л.',
-  'kg': 'кг.',
-  'g': 'г.',
-  'entity': 'шт.',
+  'ml': 'мл',
+  'g': 'г',
+  'entity': 'шт',
 }
 
 export {

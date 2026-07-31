@@ -97,51 +97,39 @@ async function addNewOrderToQueueAPI(order) {
 async function fetchWarehouseListAPI() {
   // '/warehouse/list'
   console.log('API: fetchWarehouseListAPI')
-  return ({
-    data: 
-      [
-        {
-          id: 1,
-          name: 'Водка',
-          quantity: 20,
-          unit: 'l',
-        },
-        {
-          id: 2,
-          name: 'Джин',
-          quantity: 10,
-          unit: 'l',
-        },
-        {
-          id: 3,
-          name: 'Ром',
-          quantity: 10,
-          unit: 'l',
-        },
-        {
-          id: 4,
-          name: 'Вода',
-          quantity: 100,
-          unit: 'l',
-        },
-        {
-          id: 5,
-          name: 'Стакан пластик 400',
-          quantity: 100,
-          unit: 'entity',
-        },
-      ]
+
+  return new Promise((resolve, reject) => {
+    API.QUERY({
+      method: 'get',
+      url: `/api/warehouse/list`,
     })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error))
+  })
 }
 async function createWarehouseItemAPI(newWarehouseItem) {
   // 'warehouse/create'
-  console.log('API: createWarehouseItemAPI, newWarehouseItem ->', newWarehouseItem)
-  return 'MOCK_ID'
+  return new Promise((resolve, reject) => {
+    API.QUERY({
+      method: 'post',
+      url: `/api/warehouse/create`,
+      data: newWarehouseItem,
+    })
+      .then((response) => resolve(response))
+      .catch((error) => reject(error))
+  })
 }
 async function editWarehouseItemAPI(warehouseItem) {
-  // '/warehouse/edit',
-  console.log('API: editWarehouseItemAPI, warehouseItem ->', warehouseItem)
-  return 'MOCK_ID'
+  // 'warehouse/update'
+  return new Promise((resolve, reject) => {
+    API.QUERY({
+      method: 'post',
+      url: `/api/warehouse/update`,
+      data: warehouseItem,
+    })
+      .then((response) => resolve(response))
+      .catch((error) => reject(error))
+  })
 }
 
 export {

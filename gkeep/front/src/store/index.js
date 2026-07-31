@@ -185,9 +185,9 @@ export default createStore({
         await editWarehouseItemAPI({
           id: payload.id,
           name: payload.name,
-          quantity: payload.quantity
+          quantity: payload.quantity,
+          units: payload.units,
         });
-        // Компонент после этого вызовет fetchWarehouseList для полной перерисовки
       } catch (error) {
         console.error('Ошибка при редактировании:', error);
         throw error;
@@ -201,9 +201,8 @@ export default createStore({
         await createWarehouseItemAPI({
           name: payload.name,
           quantity: payload.quantity,
-          unit: payload.unit
+          units: payload.units
         });
-        // Компонент после этого вызовет fetchWarehouseList для полной перерисовки
       } catch (error) {
         console.error('Ошибка при создании элемента:', error);
         throw error;

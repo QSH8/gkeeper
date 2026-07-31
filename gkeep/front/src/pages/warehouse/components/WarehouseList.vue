@@ -27,7 +27,7 @@
           >
             <td class="col-name"><div class="text-ellipsis">{{ item.name }}</div></td>
             <td class="col-qty text-bold">{{ item.quantity }}</td>
-            <td class="col-unit text-muted">{{ UNITS?.[item.unit] }}</td>
+            <td class="col-unit text-muted">{{ item.units }}</td>
           </tr>
         </tbody>
       </table>
@@ -71,19 +71,19 @@
           </div>
 
           <!-- Поле рендерится только в режиме создания нового элемента -->
-          <div v-if="!isEditMode" class="form-group">
+          <div class="form-group">
             <div class="select-wrapper">
               <label>Единица измерения</label>
               <select
-                :value="formUnit"
-                @change="formUnit = $event.target.value"
+                :value="formUnits"
+                @change="formUnits = $event.target.value"
                 class="custom-select"
               >
                 <option value="" disabled selected hidden></option>
                 <option 
                   v-for="option in unitOptions" 
                   :key="option.key" 
-                  :value="option.key"
+                  :value="option.value"
                 >
                   {{ option.value }}
                 </option>
@@ -136,7 +136,7 @@ export default {
       formId: null,
       formName: '',
       formQuantity: '',
-      formUnit: '',
+      formUnits: '',
       unitOptions: UNIT_OPTIONS,
       UNITS,
     };
@@ -178,7 +178,7 @@ export default {
       this.formId = item.id;
       this.formName = item.name;
       this.formQuantity = item.quantity;
-      this.formUnit = item.unit;
+      this.formUnits = item.units;
       
       this.isModalOpen = true;
     },
@@ -191,7 +191,7 @@ export default {
       this.formId = null;
       this.formName = '';
       this.formQuantity = '';
-      this.formUnit = '';
+      this.formUnits = '';
       
       this.isModalOpen = true;
     },
@@ -210,7 +210,7 @@ export default {
         this.validationError = 'Введите корректное количество';
         return false;
       }
-      if (!this.isEditMode && !this.formUnit) {
+      if (!this.isEditMode && !this.formUnits) {
         this.validationError = 'Выберите единицу измерения';
         return false;
       }
@@ -218,18 +218,17 @@ export default {
       return true;
     },
 
-    // Главный метод отправки по клику на кнопку
     async submitData() {
       if (!this.validateFields()) return;
 
       this.submitting = true;
       try {
         if (this.isEditMode) {
-          // Форматируем строго под UpdateWarehouseItemDto
           const updateDto = {
             id: Number(this.formId),
             name: String(this.formName),
-            quantity: Number(this.formQuantity)
+            quantity: Number(this.formQuantity),
+            units: String(this.formUnits),
           };
           
           await this.editWarehouseItem(updateDto);
@@ -240,7 +239,7 @@ export default {
           const createDto = {
             name: String(this.formName),
             quantity: Number(this.formQuantity),
-            unit: String(this.formUnit)
+            units: String(this.formUnits)
           };
           
           await this.createWarehouseItem(createDto);
@@ -248,7 +247,7 @@ export default {
         }
         
         this.closeModal();
-        await this.fetchData(); // Перерисовка актуальных данных
+        await this.fetchData()
       } catch (error) {
         alert('Не удалось сохранить изменения на сервере', error);
       } finally {
@@ -343,7 +342,7 @@ export default {
 .warehouse-table th, 
 .warehouse-table td {
   padding: 1rem 1rem;
-  text-align: start; /* Центрирование контента во всех колонках */
+  text-align: center; /* Центрирование контента во всех колонках */
   vertical-align: middle;
   border-bottom: 1px solid #eee;
 }
