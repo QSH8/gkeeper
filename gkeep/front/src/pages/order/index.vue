@@ -21,24 +21,8 @@
           </div>
 
           <li class="info-list__item">
-            <p class="info-list__item-label">Купил:</p>
+            <p class="info-list__item-label">Клиент:</p>
             <p class="info-list__item-value">{{ orderDetail.customerName }}</p>
-          </li>
-          <li class="info-list__item">
-            <p class="info-list__item-label">Создан:</p>
-            <p class="info-list__item-value">{{ formatDate(orderDetail.createdAt) }}</p>
-          </li>
-          <li class="info-list__item">
-            <p class="info-list__item-label">Принял:</p>
-            <p class="info-list__item-value">{{ orderDetail.acceptedBy }}</p>
-          </li>
-          <li class="info-list__item">
-            <p class="info-list__item-label">Завершен:</p>
-            <p class="info-list__item-value">{{ formatDate(orderDetail.finishedAt) ?? '-' }}</p>
-          </li>
-          <li class="info-list__item">
-            <p class="info-list__item-label">Завершил:</p>
-            <p class="info-list__item-value">{{ orderDetail.finishedBy ?? '-' }}</p>
           </li>
         </ul>
       </div>
@@ -146,20 +130,17 @@ export default {
     async fetchOrderById() {
       this.loading = true
 
-      try {
         const response = await fetchOrderByIdAPI(this.$route.params.id)
-        
-        if (response.data) {
-          setTimeout(() => {
-            this.orderDetail = response.data.info
-            this.orderItems = response.data.items
 
-            this.loading = false
-          }, 500);
+        console.log('response', response);
+        
+        
+        if (response) {
+          this.orderDetail = response?.info ?? {}
+          this.orderItems = response?.items ?? []
+
+          this.loading = false
         }
-      } catch (e) {
-        console.log('Не удалось получить заказ')
-      }
     },
 
     calculateTotal() {

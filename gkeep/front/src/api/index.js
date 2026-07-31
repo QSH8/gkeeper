@@ -19,14 +19,15 @@ async function fetchOrderByIdAPI(orderId) {
   // '/order' by id
   console.log('API: fetchOrderByIdAPI, orderId ->', orderId)
 
-  // return new Promise((resolve, reject) => {
-  //   API.QUERY({
-  //     method: 'get',
-  //     url: `/orders/list`,
-  //   })
-  //     .then((response) => resolve(response.data.data))
-  //     .catch((error) => reject(error))
-  // })
+  return new Promise((resolve, reject) => {
+    API.QUERY({
+      method: 'post',
+      url: `/api/orders/get-order`,
+      data: { id: orderId }
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error))
+  })
   return ({
     data: {
       info: {
@@ -77,6 +78,15 @@ async function fetchMenuListAPI() {
 
 async function onFinishOrderAPI(orderId) {
   console.log('API: onFinishOrderAPI, orderId ->', orderId)
+  return new Promise((resolve, reject) => {
+    API.QUERY({
+      method: 'post',
+      url: `/api/orders/finish`,
+      data: { id: orderId },
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error))
+  })
 }
 
 async function addNewOrderToQueueAPI(order) {

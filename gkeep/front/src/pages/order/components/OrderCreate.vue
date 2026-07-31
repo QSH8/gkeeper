@@ -37,11 +37,11 @@
 
     <div class="form-group">
       <div class="select-wrapper">
-        <label for="payment-method" class="form-label">Единица измерения</label>
+        <label for="payment-method" class="form-label">Способ оплаты</label>
         <select
           id="payment-method"
-          :value="form.paymentMethod"
-          @change="form.paymentMethod = $event.target.value"
+          v-model="form.paymentMethod"
+          @change="updateOrderInfo('paymentMethod')"
           class="custom-select"
         >
           <option 
@@ -65,14 +65,13 @@
           class="added-item-row"
         >
           <div class="item-info">
-            <span class="item-title">{{ item.title }}</span>
-            <span class="item-price">{{ item.price }} ₽</span>
+            <span class="item-title">{{ item.quantity }}x {{item.name }}</span> - <span class="item-price">{{ item.price }} ₽</span>
           </div>
           
           <button 
             type="button" 
             class="delete-item-btn" 
-            @click="handleRemoveItem(index)"
+            @click="handleRemoveItem(item.id)"
             aria-label="Удалить позицию"
           >
             <svg class="delete-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -87,6 +86,25 @@
       <div v-else class="empty-items-placeholder">
         Вы пока не добавили ни одной позиции
       </div>
+      
+
+      <!-- <div class="form-group">
+        <label class="form-label">Сеты</label>
+
+        <div v-if="orderItems.length > 0" class="added-items-list">
+          <div 
+            v-for="(item, index) in sets" 
+            :key="item.id + '-' + index" 
+            class="added-item-row"
+          >
+            <div class="item-info">
+              <span class="item-title">{{ item.quantity }}x {{item.name }}</span> - <span class="item-price">{{ item.price }} ₽</span>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+      <h1 class="total">{{ finalPrice }} ₽</h1>
 
       <!-- Кнопка (+) для перехода на страницу меню -->
       <button 
@@ -100,21 +118,21 @@
     </div>
 
     <div class="order-button-wrapper">
-    <button
-      type="button" 
+      <button
+        type="button" 
 
-      class="add-to-queue-order-btn"
-      :class="{ 'disabled': disabledAddToQueueButton }"
-      @click="showConfirmAddToQueue = true"
-      aria-label="Поместить в очередь"
-    >
-      <span class="btn-text">Поместить в очередь</span>
-    </button>
-    <ConfirmModal :isOpen="showConfirmAddToQueue" title="Создание нового заказа"
-      message="Хотите создать новый заказ?" confirmText="Да" @confirm="addNewOrderToQueue"
-      @close="showConfirmAddToQueue = false"
-    />
-  </div>
+        class="add-to-queue-order-btn"
+        :class="{ 'disabled': disabledAddToQueueButton }"
+        @click="showConfirmAddToQueue = true"
+        aria-label="Поместить в очередь"
+      >
+        <span class="btn-text">Поместить в очередь</span>
+      </button>
+      <ConfirmModal :isOpen="showConfirmAddToQueue" title="Создание нового заказа"
+        message="Хотите создать новый заказ?" confirmText="Да" @confirm="addNewOrderToQueue"
+        @close="showConfirmAddToQueue = false"
+      />
+    </div>
   </div>
 </template>
 
@@ -142,6 +160,12 @@ export default {
         { key: 'cash', value: 'Наличные'},
       ],
       showConfirmAddToQueue: false,
+
+      setsCategories: {
+        'on-choise': 'Алкоголя на выбор',
+        'shots': 'Шотов',
+        'tinctures': 'Настоек',
+      }
     };
   },
   computed: {
@@ -149,6 +173,33 @@ export default {
       orderItems: (state) => state.orderItems,
       orderInfo: (state) => state.orderInfo,
     }),
+
+    // sets() {
+    //   const stacks = this.orderItems.filter(item => item.category === 'stacks')
+    //   const stacksSets = stacks.reduce((acc, cur) => {
+    //     if (cur.subCategory in acc) {
+    //       acc[cur.subCategory].sets
+    //     } else {
+    //       acc[cur.subCategory] = {
+    //         name: this.setsCategories[cur.subCategory],
+    //         sets: {
+
+    //         }
+    //       }
+    //     }
+
+    //     return acc
+    //   }, {})
+
+      
+    // },
+
+    finalPrice() {
+      return this.orderItems.reduce((acc, cur) => {
+        acc = acc + (cur.price * cur.quantity)
+        return acc
+      }, 0)
+    },
 
     hasClientName() {
       return !!this.form?.clientName?.trim()
@@ -179,11 +230,13 @@ export default {
     },
 
     updateOrderInfo(fieldName) {
+      console.log('fieldName', fieldName);
+      
       this.$store.dispatch('updateOrderInfo', { fieldName, fieldValue: this.form[fieldName] })
     },
     // Удаление позиции по ее индексу в массиве
-    handleRemoveItem(index) {
-      this.$emit('remove-item', index);
+    handleRemoveItem(id) {
+      this.$store.dispatch('removeItemFromOrder', id)
     },
     // Клик по кнопке (+) транслирует родителю команду переключить экран/страницу
     goToMenu() {
@@ -476,13 +529,15 @@ export default {
 /* Информация о блюде внутри строки */
 .item-info {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: center;
+  align-self: centers;
   gap: 2px;
 }
 
 .item-title {
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 400;
   color: #1c1c1e;
 }
 

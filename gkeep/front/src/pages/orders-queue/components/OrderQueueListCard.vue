@@ -1,11 +1,11 @@
 <template>
-  <div class="order-card" :class="{'priority': order.priority}" @click="$router.push({ path: `/order/${order.id}` })">
+  <div class="order-card" :class="{'priority': order.info.isPriority}" @click="$router.push({ path: `/order/${order.info.id}` })">
     <div class="order-header">
       <div>
-        <span class="order-id">#{{ order.id }}</span> | <span class="order-status">{{ ORDER_STATUSES?.[order.status] || 'Завершён' }}</span>
-        <span v-if="order.priority" class="order-status_priority">{{ 'Приоритет' || '' }}</span>
+        <span class="order-id">#{{ order.info.id }}</span> | <span class="order-status">{{ ORDER_STATUSES?.[order.status] || 'Завершён' }}</span>
+        <span v-if="order.info.isPriority" class="order-status_priority">{{ 'Приоритет' || '' }}</span>
       </div>
-      <span class="customer-name">{{ order.customer }}</span>
+      <span class="customer-name">{{ order.info.customer }}</span>
     </div>
 
     <div class="order-body">
@@ -16,14 +16,14 @@
 
     <div class="order-body__info">
       <div class="order-body__info-wrapper">
-        <p class="order-body__info-item">Принят: <span>{{ formatDate(order.createdAt)  }}, {{ order.createdBy }}</span></p>
-        <!-- <p class="order-body__info-item">Завершён: <span>{{ formatDate(order.finishedAt)  }}, {{ order.whoFinish }}</span></p> -->
+        <p class="order-body__info-item">Принят: <span>{{ formatDate(order.info.createdAt)  }}</span></p>
+        <!-- <p class="order-body__info-item">Завершён: <span>{{ formatDate(order.info.finishedAt) }}</span></p> -->
       </div>
     </div>
 
     <div class="order-footer">
-      <span class="order-price">{{ order.price }} ₽</span>
-      <button class="details-btn" @click.stop="showConfirmModal(order.id)">
+      <span class="order-price">{{ order.info.price }} ₽</span>
+      <button class="details-btn" @click.stop="showConfirmModal(order.info.id)">
         Завершить
       </button>
     </div>
@@ -35,7 +35,7 @@
 
 <script>
 import { toast } from 'vue3-toastify';
-import { onFinishOrderAPI } from "@api"
+import { onFinishOrderAPI } from "../../../api/index.js"
 import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 import { formatDate } from '@/services';
 import { ORDER_STATUSES } from '@/constants';
@@ -66,14 +66,16 @@ export default {
       this.confirmModalData = orderId
       this.showConfirm = true
     },
-    finishOrder() {
+    async finishOrder() {
       this.$emit('finish-order', this.confirmModalData);
 
       this.$nextTick(() => {
         toast(`Заказ #${this.confirmModalData} завершён`, { autoClose: 1000, type: 'success', position: 'top-center' })
       })
 
-      onFinishOrderAPI(this.confirmModalData)
+      await onFinishOrderAPI(this.confirmModalData)
+
+      await this.$store.dispatch('fetchOrdersList')
     }
   }
 }

@@ -1,19 +1,23 @@
 import CoreDate from '@/utils/coreDate';
 
 function sortArrayByCreatedAtDate(items, order = 'DESC') {
-  if (order === 'DESC') return items.toSorted((a, b) => CoreDate.toDate(b.createdAt) - CoreDate.toDate(a.createdAt))
-  else if (order === 'ASC') return items.toSorted((a, b) => CoreDate.toDate(a.createdAt) - CoreDate.toDate(b.createdAt))
+  const sortItems = items.filter(item => item.status !== 'in_progress')
+  if (order === 'DESC') return sortItems.toSorted((a, b) => CoreDate.toDate(b?.info?.createdAt) - CoreDate.toDate(a?.info?.createdAt))
+  else if (order === 'ASC') return sortItems.toSorted((a, b) => CoreDate.toDate(a?.info?.createdAt) - CoreDate.toDate(b?.info?.createdAt))
 }
 
 function sortWithPriorityAndDate(items) {
-  return items.toSorted((a, b) => {
-    const priorityDiff = (b.priority || false) - (a.priority || false)
-    
-    if (priorityDiff !== 0) {
-      return priorityDiff
-    }
-    return CoreDate.toDate(a.createdAt) - CoreDate.toDate(b.createdAt)
-  })
+  console.log('items', items);
+  
+  return items.filter(item => item.status === 'in_progress')
+    .toSorted((a, b) => {
+      const priorityDiff = (b?.info?.isPriority || false) - (a?.info?.isPriority || false)
+      
+      if (priorityDiff !== 0) {
+        return priorityDiff
+      }
+      return CoreDate.toDate(a?.info?.createdAt) - CoreDate.toDate(b?.info?.createdAt)
+    })
 }
 
 function formatPrice(value) {
@@ -29,11 +33,16 @@ function formatDate(value) {
 }
 
 function formatNewOrderRequest(orderInfo, orderItems) {
+  const price = getTotalPrice(orderItems)
+
+  console.log('price', price);
+
   return {
     customerName: orderInfo?.clientName ?? '',
     comments: orderInfo?.comments ?? '',
     paymentMethod: orderInfo?.paymentMethod ?? '',
     isPriority: !!orderInfo?.isPriority,
+    price,
     items: orderItems,
   }
 }
@@ -53,11 +62,19 @@ function mergeArraysByQuantity(X, Y) {
   return Array.from(registry.values());
 }
 
+function getTotalPrice(items) {
+  return items.reduce((acc, cur) => {
+    acc += (cur.price * cur.quantity)
+    return acc
+  }, 0)
+}
+
 export {
   formatPrice,
   formatDate,
   formatNewOrderRequest,
   mergeArraysByQuantity,
   sortArrayByCreatedAtDate,
-  sortWithPriorityAndDate
+  sortWithPriorityAndDate,
+  getTotalPrice,
 }

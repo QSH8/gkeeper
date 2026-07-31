@@ -136,6 +136,10 @@ export default createStore({
     SET_ORDERS_LIST(state, ordersList) {
       state.ordersList = ordersList
     },
+
+    REMOVE_ITEM_FROM_ORDER(state, itemId) {
+      state.orderItems = state.orderItems.filter(item => item.id !== itemId)
+    },
   },
   
   actions: {
@@ -178,6 +182,10 @@ export default createStore({
       }
     },
 
+    removeItemFromOrder({ commit }, itemId) {
+      commit('REMOVE_ITEM_FROM_ORDER', itemId)
+    },
+
     // 2. Редактирование ингредиента (POST /warehouse/edit)
     // Ожидает объект: { id, name, quantity }
     async editWarehouseItem({ commit }, payload) {
@@ -211,12 +219,25 @@ export default createStore({
     // Warehouse end
     
 
-    async addNewOrderToQueue({ state }) {
+    async addNewOrderToQueue({ state, dispatch }) {
       console.log('addNewOrderToQueue')
+
+     
       
-      const newOrderId = await addNewOrderToQueueAPI(formatNewOrderRequest(state.orderInfo, state.orderItems))
       
-      toast(`Новый заказ #${newOrderId} добавлен в очередь`, { autoClose: 1000, type: 'success', position: 'top-center' })
+      const { data } = await addNewOrderToQueueAPI(formatNewOrderRequest(state.orderInfo, state.orderItems))
+      console.log('data ->', data);
+
+      if (data?.status === 'error') {
+        if (data?.message) {
+          toast(data?.message, { autoClose: 3000, type: 'error', position: 'top-center' })
+        }
+      } 
+      
+
+      await dispatch('fetchOrdersList')
+      
+      toast(`Новый заказ #${id} добавлен в очередь`, { autoClose: 1000, type: 'success', position: 'top-center' })
     },
 
     clearPreOrderItems({ commit }) {

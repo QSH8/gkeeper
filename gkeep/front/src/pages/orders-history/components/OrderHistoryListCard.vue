@@ -1,9 +1,9 @@
 <template>
-  <div class="order-card" :class="{'priority': order.priority}" @click="$router.push({ path: `/order/${order.id}` })">
+  <div class="order-card" :class="{'priority': order.info.priority}" @click="$router.push({ path: `/order/${order.info.id}` })">
     <div class="order-header">
       <div>
-        <span class="order-id">#{{ order.id }}</span> | <span class="order-status">{{ ORDER_STATUSES?.[order.status] || 'Завершён' }}</span>
-        <p v-if="order.priority" class="order-status_priority">{{ 'Приоритет' || '' }}</p>
+        <span class="order-id">#{{ order.info.id }}</span> | <span class="order-status">{{ ORDER_STATUSES?.[order.status] || 'Завершён' }}</span>
+        <p v-if="order.info.priority" class="order-status_priority">{{ 'Приоритет' || '' }}</p>
       </div>
       <span class="customer-name">{{ order.customer }}</span>
     </div>
@@ -15,13 +15,13 @@
     </div>
     <div class="order-body__info">
       <div>
-        <p class="order-body__info-item">Принят: <span>{{ formatDate(order.createdAt)  }}, {{ order.whoCreate }}</span></p>
-        <p class="order-body__info-item">Завершён: <span>{{ formatDate(order.finishedAt)  }}, {{ order.whoFinish }}</span></p>
+        <p class="order-body__info-item">Принят: <span>{{ formatDate(order.info.createdAt)  }}, {{ order.info.whoCreate }}</span></p>
+        <p class="order-body__info-item">Завершён: <span>{{ formatDate(order.info.finishedAt)  }}, {{ order.info.whoFinish }}</span></p>
       </div>
     </div>
 
     <div class="order-footer">
-      <span class="order-price">{{ order.price }} ₽</span>
+      <span class="order-price">{{ order.info.price }} ₽</span>
       <!-- <button class="details-btn" @click.stop="showConfirmModal(order.id)">
         Завершить
       </button> -->
