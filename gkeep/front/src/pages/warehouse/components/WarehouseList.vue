@@ -1,7 +1,34 @@
 <template>
   <div class="warehouse-container">
+    <div class="search-box">
+      <div class="search-input-wrapper">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input 
+          v-model="searchQuery" 
+          type="text" 
+          placeholder="Поиск по названию..." 
+          class="search-input"
+          aria-label="Поиск по названию"
+        />
+        <button 
+          v-if="searchQuery" 
+          class="clear-button" 
+          @click="searchQuery = ''"
+          aria-label="Очистить поиск"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+    <div v-if="filteredItems.length === 0" class="menu-list-empty">
+      <p v-if="searchQuery">Ничего не найдено по запросу «{{ searchQuery }}»</p>
+      <p v-else>В этой категории пока нет позиций</p>
+    </div>
     <!-- Таблица/список данных -->
-    <div class="table-container">
+    <div v-else class="table-container">
       <table class="warehouse-table">
         <thead>
           <tr>
@@ -20,7 +47,7 @@
           <!-- Вывод строк таблицы -->
           <tr 
             v-else 
-            v-for="item in warehouseItems" 
+            v-for="item in filteredItems" 
             :key="item.id" 
             class="table-row"
             @click="openEditModal(item)"
@@ -130,6 +157,7 @@ export default {
       isModalOpen: false,
       isEditMode: false,
       validationError: '',
+      searchQuery: '',
       
       // Каждое поле — отдельное реактивное свойство (без единого объекта form)
       formId: null,
@@ -144,7 +172,19 @@ export default {
   computed: {
     ...mapState({
       warehouseItems: state => state.warehouseItems
-    })
+    }),
+
+    filteredItems() {
+      const query = this.searchQuery.trim().toLowerCase();
+
+      if (query) {
+        return this.warehouseItems.filter(item => 
+          item.name && item.name.toLowerCase().includes(query)
+        );
+      }
+      
+      return this.warehouseItems
+    }
   },
 
   mounted() {
@@ -315,6 +355,59 @@ export default {
   font-family: sans-serif;
   margin: 0 auto;
 }
+
+/* --- Поиск --- */
+.search-box {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  width: 16px;
+  height: 16px;
+  color: #8e8e93;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 36px;
+  font-size: 15px;
+  background-color: #f2f2f7;
+  border: none;
+  border-radius: 12px;
+  color: #1c1c1e;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.clear-button {
+  position: absolute;
+  right: 10px;
+  background: #c7c7cc;
+  border: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+
 
 .page-title {
   font-size: 20px;
