@@ -393,12 +393,9 @@ export default {
 }
 
 .order-button-wrapper {
-  position: fixed;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  bottom: 0;
-  left: 0;
   width: 100%;
   /* Безопасные отступы для безрамочных экранов (iPhone с Notch / Dynamic Island) */
   padding-bottom: env(safe-area-inset-bottom, 0px);
