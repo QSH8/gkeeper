@@ -381,7 +381,7 @@ export default {
 
 .fab-container {
   position: fixed;
-  bottom: 50px;
+  bottom: 0;
   left: 0;
   right: 0;
   background: linear-gradient(to top, rgba(255,255,255,1) 80%, rgba(255,255,255,0));
