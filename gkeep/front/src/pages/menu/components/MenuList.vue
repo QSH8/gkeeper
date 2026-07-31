@@ -144,6 +144,7 @@ export default {
         },
         { id: 5, label: 'Кухня', value: 'kitchen' },
         { id: 6, label: 'Разное', value: 'another' },
+        { id: 7, label: 'Бесплатные', value: 'vipFree' },
       ],
 
       preorder: [],
