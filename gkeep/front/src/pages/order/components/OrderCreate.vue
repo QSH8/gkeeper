@@ -199,9 +199,7 @@ export default {
 
 <style scoped>
 .order-button-wrapper {
-  position: fixed;
-  bottom: 0;
-  left: 0;
+
   width: 100%;
   /* Безопасные отступы для безрамочных экранов (iPhone с Notch / Dynamic Island) */
   padding-bottom: env(safe-area-inset-bottom, 0px);
