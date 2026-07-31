@@ -200,11 +200,11 @@ export default {
 <style scoped>
 .order-button-wrapper {
   position: fixed;
-  bottom: 50px;
+  bottom: 0;
   left: 0;
   width: 100%;
   /* Безопасные отступы для безрамочных экранов (iPhone с Notch / Dynamic Island) */
-  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   background: linear-gradient(to top, rgba(255, 255, 255, 1) 80%, rgba(255, 255, 255, 0) 100%);
   box-sizing: border-box;
   z-index: 100;
