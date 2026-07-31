@@ -221,6 +221,7 @@ export default createStore({
 
     async addNewOrderToQueue({ state, dispatch }, { totalPrice }) {
       console.log('addNewOrderToQueue')
+      console.log('totalPrice', totalPrice)
 
      
       

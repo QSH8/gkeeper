@@ -42,7 +42,7 @@ function formatNewOrderRequest(orderInfo, orderItems) {
     comments: orderInfo?.comments ?? '',
     paymentMethod: orderInfo?.paymentMethod ?? '',
     isPriority: !!orderInfo?.isPriority,
-    price: isNaN(Number(orderInfo)) ? 0 : Number(orderInfo),
+    price: isNaN(Number(orderInfo.price)) ? 0 : Number(orderInfo.price),
     items: orderItems,
   }
 }

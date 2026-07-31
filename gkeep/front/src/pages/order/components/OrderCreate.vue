@@ -316,7 +316,7 @@ export default {
 
     },
     addNewOrderToQueue() {
-      this.$store.dispatch('addNewOrderToQueue', { totalPrice: this.finalPriceWithDiscount })
+      this.$store.dispatch('addNewOrderToQueue', { totalPrice: this.checkDiscount ? this.finalPriceWithDiscount : this.totalPrice })
 
       this.goToOrdersQueue()
     },
